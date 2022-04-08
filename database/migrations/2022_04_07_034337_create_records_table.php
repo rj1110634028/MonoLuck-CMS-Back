@@ -14,8 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('records', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
+            $table->text('description')->nullable();
+            $table->unsignedInteger('lockerId');
+            $table->unsignedInteger('userId');
             $table->timestamps();
+            $table->foreign('userId')->references('id')->on('users');
+            $table->foreign('lockerId')->references('id')->on('lockers');
         });
     }
 

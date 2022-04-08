@@ -2,11 +2,61 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\user;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        //先確認user資訊是否正確
+        if (Auth::attempt($credentials)) {
+            do {
+                //建立隨機亂碼
+                $loginToken = Str::random(60);
+                $checkTokenExist = User::where('remember_token', '=', $loginToken)->first();
+            } while ($checkTokenExist);
+            //建立token並寫入使用時間
+            $user = User::where('email', '=', $request->email)->first();
+            $user->remember_token =  $loginToken;
+            $user->token_expire_time = date('Y/m/d H:i:s', time() + 10 * 60);
+            $user->save();
+            $response = array("token" => $user->remember_token, "expire_time" => $user->token_expire_time);
+            $httpstatus = 200;
+        } else {
+            //user not exist or input infomation error
+            $response = "login error";
+            $httpstatus = 400;
+        }
+        return response()->json(['message' => $response], $httpstatus);
+    }
+
+    public function register(Request $request)
+    {
+        $registrations = new user();
+        $registrations->email = '000@example.com';
+        $registrations->name = 'root';
+        $registrations->password = Hash::make('root');
+        $registrations->phone = '0987654321';
+        $registrations->permission = 0;
+        $registrations->save();
+        // DB::table('users')->insert([
+        //     'email' => '000@example.com',
+        //     'name' => 'root',
+        //     'password' => Hash::make('root'),
+        //     'phone' => '0987654321',
+        //     'permission' => 0,
+        // ]);
+        return DB::table('users')->get();
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +64,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return DB::table('user')->get();
     }
 
     /**
