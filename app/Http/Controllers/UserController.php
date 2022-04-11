@@ -64,7 +64,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return DB::table('user')->get();
+        return DB::table('users')->get();
     }
 
     /**

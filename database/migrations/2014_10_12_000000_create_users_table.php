@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('cardId',20)->unique()->nullable();
             $table->string('phone',10)->unique()->nullable();
             $table->string('email',80)->unique();
+            $table->dateTime('token_expire_time')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

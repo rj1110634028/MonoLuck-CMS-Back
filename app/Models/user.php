@@ -41,4 +41,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function locker()
+    {
+        return $this->hasOne(locker::class, 'lockerId', 'id');
+    }
+
+    public function record()
+    {
+        return $this->hasMany(record::class, 'userId', 'id');
+    }
 }
