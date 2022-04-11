@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('lockers', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('lockerNo',4);
-            $table->string('lockerEncoding',20);
+            $table->string('lockerNo',4)->unique();
+            $table->string('lockerEncoding',4)->unique();
             $table->unsignedInteger('userId')->nullable();
             $table->timestamps();
             $table->foreign('userId')->references('id')->on('users');
