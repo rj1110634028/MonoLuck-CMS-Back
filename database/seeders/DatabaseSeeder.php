@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         locker::factory(34)->create();
-        user::factory(10)->create();
+        user::factory(10)->create()->each(function ($u) {
+            locker::where('userId','=',NULL)->inRandomOrder()->first()->update(['userId' => $u->id]);
+        });
     }
 }
