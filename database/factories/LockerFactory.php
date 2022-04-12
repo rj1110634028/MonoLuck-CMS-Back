@@ -19,7 +19,7 @@ class LockerFactory extends Factory
     {
         return [
             'lockerNo' => sprintf("%02d", $this->faker->unique()->numberBetween(0, 33)),
-            'lockerEncoding' => $this->faker->unique()->regexify('([0-9][1-9]){2}'),
+            'lockerEncoding' => $this->faker->unique()->regexify('[0-9]{4}'),
         ];
     }
 }

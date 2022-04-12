@@ -21,9 +21,9 @@ class UserFactory extends Factory
         
         return [
             'name' => $this->faker->name(),
-            'phone' => $this->faker->unique()->numerify('09########'),
+            'phone' => $this->faker->unique()->regexify('09\d{8}'),
             'email' => $this->faker->unique()->safeEmail(),
-            'cardId' => $this->faker->unique()->numerify('################'),
+            'cardId' => $this->faker->unique()->regexify('\d{16}'),
             'password' => Hash::make("0000"), // password
         ];
     }
