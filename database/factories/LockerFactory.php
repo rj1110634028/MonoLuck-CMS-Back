@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use app\Models\user;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\locker>
@@ -19,8 +18,8 @@ class LockerFactory extends Factory
     public function definition()
     {
         return [
-            'lockerNo' => $this->faker->unique()->numberBetween(0, 33),
-            'lockerEncoding' => $this->faker->unique()->regexify('[0-9][1-9]{2}'),
+            'lockerNo' => sprintf("%02d", $this->faker->unique()->numberBetween(0, 33)),
+            'lockerEncoding' => $this->faker->unique()->regexify('([0-9][1-9]){2}'),
         ];
     }
 }

@@ -19,15 +19,21 @@ class RecordFactory extends Factory
      */
     public function definition()
     {
-        $user=user::inRandomOrder()->first();
-        $description=NULL;
-        if($user->permission==0){
-            $description=$this->faker->text();
+        $locker = locker::where("userId", "<>", NULL)->inRandomOrder()->first();
+        $randnum = rand(1, 40);
+        $userId = $locker->userId;
+        $description = NULL;
+        if ($randnum == 1) {
+            $user = user::where("permission", "=", 0)->inRandomOrder()->first();
+            if ($user != NULL) {
+                $userId = $user->id;
+                $description = $this->faker->text();
+            }
         }
         return [
-            'description'=>$description,
-            'lockerId'=>locker::inRandomOrder()->first()->id,
-            'userId'=>$user->id,
+            'description' => $description,
+            'lockerId' => $locker->id,
+            'userId' => $userId,
         ];
     }
 }
