@@ -28,7 +28,7 @@ class UserController extends Controller
             $user->remember_token =  $loginToken;
             $user->token_expire_time = date('Y/m/d H:i:s', time() + 10 * 60);
             $user->save();
-            $response = array("permission" => $user->permission,"token" => $user->remember_token, "expire_time" => $user->token_expire_time);
+            $response = array("permission" => $user->permission, "token" => $user->remember_token, "expire_time" => $user->token_expire_time);
             $httpstatus = 200;
         } else {
             //user not exist or input infomation error
@@ -56,6 +56,8 @@ class UserController extends Controller
         // ]);
         return DB::table('users')->get();
     }
+
+
 
     /**
      * Display a listing of the resource.
@@ -119,7 +121,21 @@ class UserController extends Controller
      */
     public function update(Request $request, user $user)
     {
-        //
+        if ($request['id'] != NULL && $request['email'] != NULL && $request['name'] != NULL && $request['cardId'] != NULL && $request['phone'] != NULL) {
+            $user = user::where('id', '=', $request['id'])->first();
+            if ($user != NULL) {
+                $user->update([
+                    'email' => $request['email'],
+                    'name' => $request['name'],
+                    'cardId' => $request['cardId'],
+                    'phone' => $request['phone']
+                ]);
+                return response($user, 200);
+            }
+            return response("error", 400);
+        } else {
+            return response("error", 400);
+        }
     }
 
     /**
