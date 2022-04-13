@@ -119,22 +119,35 @@ class UserController extends Controller
      * @param  \App\Models\user  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, user $user)
+    public function update(Request $request)
     {
-        if ($request['id'] != NULL && $request['email'] != NULL && $request['name'] != NULL && $request['cardId'] != NULL && $request['phone'] != NULL) {
-            $user = user::where('id', '=', $request['id'])->first();
-            if ($user != NULL) {
-                $user->update([
-                    'email' => $request['email'],
-                    'name' => $request['name'],
-                    'cardId' => $request['cardId'],
-                    'phone' => $request['phone']
-                ]);
-                return response($user, 200);
-            }
+        if ($request['id'] == NULL || $request['email'] == NULL || $request['name'] == NULL || $request['cardId'] == NULL || $request['phone'] == NULL) {
             return response("error", 400);
         } else {
-            return response("error", 400);
+            if (preg_match("/^8869\d{8}$/", $request['phone'])) {
+                $request['phone'] = "0" . ltrim($request['phone'], "886");
+            }
+
+            if (!preg_match("/^09\d{8}$/", $request['phone'])) {
+                return response("error", 400);
+            } elseif (!preg_match("/^[\w!\#$%&'*+\-\/=?^_`{|}~]+(\.[\w!#$%&'*+\-\/=?^_`{|}~]+)*@[\w\-]+(\.[\w\-]+)+$/", $request['email'])) {
+                return response("error", 400);
+            } elseif (strlen($request['name'])>40){
+                return response("error", 400);
+            }else {
+                $user = user::where('id', '=', $request['id']);
+                if ($user->first() == NULL) {
+                    return response("error", 400);
+                } else {
+                    $user->update([
+                        'email' => $request['email'],
+                        'name' => $request['name'],
+                        'cardId' => $request['cardId'],
+                        'phone' => $request['phone']
+                    ]);
+                    return response($user->first(), 200);
+                }
+            }
         }
     }
 

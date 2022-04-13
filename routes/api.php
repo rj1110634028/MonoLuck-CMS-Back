@@ -20,7 +20,7 @@ use App\Http\Controllers\LockerController;
 //     return $request->user();
 // });
 Route::post('login',[UserController::class,'login']);
-Route::post('update',[LockerController::class,'update']);
+Route::post('update',[UserController::class,'update']);
 Route::get('register',[UserController::class,'register']);
 
 Route::post('lockup',[LockerController::class,'lockup']);
