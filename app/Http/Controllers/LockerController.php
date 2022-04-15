@@ -10,7 +10,7 @@ class LockerController extends Controller
 {
     public function lockup(Request $request)
     {
-        $user = user::where('cardId', '=', $request['somekey'])->first();
+        $user = user::where('cardId', '=', $request['cardId'])->first();
         if ($user != NULL) {
             $locker = locker::where('userId', '=', $user->id)->first();
             if ($locker != NULL) {
