@@ -24,4 +24,4 @@ Route::post('update',[LockerController::class,'update']);
 Route::get('register',[UserController::class,'register']);
 
 Route::post('lockup',[LockerController::class,'lockup']);
-Route::get('locker',[LockerController::class,'locker']);
+Route::post('locker',[LockerController::class,'locker'])->middleware('verified')->name('verification.notice');

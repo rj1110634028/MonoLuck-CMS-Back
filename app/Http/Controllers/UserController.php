@@ -26,7 +26,7 @@ class UserController extends Controller
             //建立token並寫入使用時間
             $user = User::where('email', '=', $request->email)->first();
             $user->remember_token =  $loginToken;
-            $user->token_expire_time = date('Y/m/d H:i:s', time() + 10 * 60);
+            $user->token_expire_time = date('Y-m-d H:i:s', time() + 10 * 60);
             $user->save();
             $response = array("permission" => $user->permission, "token" => $user->remember_token, "expire_time" => $user->token_expire_time);
             $httpstatus = 200;
