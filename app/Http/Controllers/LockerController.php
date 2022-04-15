@@ -3,11 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\locker;
+use App\Models\user;
 use Illuminate\Http\Request;
 
 class LockerController extends Controller
 {
-    /**
+    public function lockup(Request $request)
+    {
+        $user = user::where('cardId', '=', $request['somekey'])->first();
+        if ($user != NULL) {
+            $locker = locker::where('userId', '=', $user->id)->first();
+            if ($locker != NULL) {
+                return response($locker->lockerEncoding, 200);
+            } else {
+                return response("error", 400);
+            }
+        } else {
+            return response("error", 400);
+        }
+    }
+
+    public function locker()
+    {
+        $locker = locker::orderBy('lockerNo','asc')->get(['lockerNo','lockUp','userId']);
+        return response($locker, 400);
+    }
+
+        /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response

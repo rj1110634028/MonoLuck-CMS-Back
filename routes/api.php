@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LockerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +16,12 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 Route::post('login',[UserController::class,'login']);
+Route::post('update',[UserController::class,'update']);
 Route::get('register',[UserController::class,'register']);
-Route::get('index',[UserController::class,'index']);
+
+Route::post('lockup',[LockerController::class,'lockup']);
+Route::get('locker',[LockerController::class,'locker']);
