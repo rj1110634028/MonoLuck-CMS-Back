@@ -21,14 +21,18 @@ class UserController extends Controller
             do {
                 //建立隨機亂碼
                 $loginToken = Str::random(60);
-                $checkTokenExist = User::where('remember_token', '=', $loginToken)->first();
+                $checkTokenExist = User::where('remember_token', '=', $loginToken)
+                ->first();
             } while ($checkTokenExist);
             //建立token並寫入使用時間
             $user = User::where('email', '=', $request->email)->first();
             $user->remember_token =  $loginToken;
             $user->token_expire_time = date('Y-m-d H:i:s', time() + 10 * 60);
             $user->save();
-            $response = array("permission" => $user->permission, "token" => $user->remember_token, "expire_time" => $user->token_expire_time);
+            $response = array(
+                "permission" => $user->permission,
+                "token" => $user->remember_token,
+                "expire_time" => $user->token_expire_time);
             $httpstatus = 200;
         } else {
             //user not exist or input infomation error

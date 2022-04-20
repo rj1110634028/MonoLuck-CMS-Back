@@ -17,14 +17,20 @@ class EnsureTokenIsValid
      */
     public function handle(Request $request, Closure $next)
     {
-        $user = DB::table('users')->where('rememberToken', '=', $request->input('token'))->first();
-        if ($user == NULL) {
-            return response("", 400);
+        $token = $request->header('token');
+        if ($token == NULL) {
+            return response("no_login", 401);
         } else {
-            if (strtotime($user->token_expire_time) < time()) {
-                return response("", 400);
+            $user = DB::table('users')->where('remember_token', '=', $token);
+            if ($user->first() == NULL) {
+                return response("no_login", 401);
             } else {
-                return $next($request);
+                if (strtotime($user->first()->token_expire_time) < time()) {
+                    return response("token_expired", 401);
+                } else {
+                    $user->update(['token_expire_time' => date('Y-m-d H:i:s', time() + 60 * 10)]);
+                    return $next($request);
+                }
             }
         }
     }

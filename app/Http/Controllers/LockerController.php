@@ -26,7 +26,7 @@ class LockerController extends Controller
     public function locker()
     {
         $locker = locker::orderBy('lockerNo','asc')->get(['lockerNo','lockUp','userId']);
-        return response($locker, 400);
+        return response($locker, 200);
     }
 
         /**

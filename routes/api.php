@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LockerController;
+use App\Http\Middleware\EnsureTokenIsValid;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,8 +21,8 @@ use App\Http\Controllers\LockerController;
 //     return $request->user();
 // });
 Route::post('login',[UserController::class,'login']);
-Route::post('update',[UserController::class,'update']);
+Route::post('update',[UserController::class,'update'])->middleware(EnsureTokenIsValid::class);
 Route::get('register',[UserController::class,'register']);
 
 Route::post('lockup',[LockerController::class,'lockup']);
-Route::post('locker',[LockerController::class,'locker'])->middleware('verified')->name('verification.notice');
+Route::get('locker',[LockerController::class,'locker'])->middleware(EnsureTokenIsValid::class);
