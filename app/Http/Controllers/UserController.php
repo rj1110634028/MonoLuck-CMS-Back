@@ -21,14 +21,18 @@ class UserController extends Controller
             do {
                 //建立隨機亂碼
                 $loginToken = Str::random(60);
-                $checkTokenExist = User::where('remember_token', '=', $loginToken)->first();
+                $checkTokenExist = User::where('remember_token', '=', $loginToken)
+                ->first();
             } while ($checkTokenExist);
             //建立token並寫入使用時間
             $user = User::where('email', '=', $request->email)->first();
             $user->remember_token =  $loginToken;
-            $user->token_expire_time = date('Y/m/d H:i:s', time() + 10 * 60);
+            $user->token_expire_time = date('Y-m-d H:i:s', time() + 10 * 60);
             $user->save();
-            $response = array("permission" => $user->permission,"token" => $user->remember_token, "expire_time" => $user->token_expire_time);
+            $response = array(
+                "permission" => $user->permission,
+                "token" => $user->remember_token,
+                "expire_time" => $user->token_expire_time);
             $httpstatus = 200;
         } else {
             //user not exist or input infomation error
@@ -56,6 +60,8 @@ class UserController extends Controller
         // ]);
         return DB::table('users')->get();
     }
+
+
 
     /**
      * Display a listing of the resource.
@@ -117,9 +123,36 @@ class UserController extends Controller
      * @param  \App\Models\user  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, user $user)
+    public function update(Request $request)
     {
-        //
+        if ($request['id'] == NULL || $request['email'] == NULL || $request['name'] == NULL || $request['cardId'] == NULL || $request['phone'] == NULL) {
+            return response("error", 400);
+        } else {
+            if (preg_match("/^8869\d{8}$/", $request['phone'])) {
+                $request['phone'] = "0" . ltrim($request['phone'], "886");
+            }
+
+            if (!preg_match("/^09\d{8}$/", $request['phone'])) {
+                return response("error", 400);
+            } elseif (!preg_match("/^[\w!\#$%&'*+\-\/=?^_`{|}~]+(\.[\w!#$%&'*+\-\/=?^_`{|}~]+)*@[\w\-]+(\.[\w\-]+)+$/", $request['email'])) {
+                return response("error", 400);
+            } elseif (strlen($request['name'])>40){
+                return response("error", 400);
+            }else {
+                $user = user::where('id', '=', $request['id']);
+                if ($user->first() == NULL) {
+                    return response("error", 400);
+                } else {
+                    $user->update([
+                        'email' => $request['email'],
+                        'name' => $request['name'],
+                        'cardId' => $request['cardId'],
+                        'phone' => $request['phone']
+                    ]);
+                    return response($user->first(), 200);
+                }
+            }
+        }
     }
 
     /**
