@@ -15,6 +15,12 @@ class LockerSeeder extends Seeder
      */
     public function run()
     {
-        locker::factory(34)->create();
+        locker::insert([
+            [
+                
+                'title' => sprintf("%02d", $this->faker->unique()->numberBetween(0, 33)),
+                'lockerEncoding' => $this->faker->unique()->regexify('[0-9]{4}'),
+            ],
+        ]);
     }
 }
