@@ -61,8 +61,6 @@ class UserController extends Controller
         return DB::table('users')->get();
     }
 
-
-
     /**
      * Display a listing of the resource.
      *
