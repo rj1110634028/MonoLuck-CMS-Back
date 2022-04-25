@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Console\Command;
 use PhpMqtt\Client\Facades\MQTT;
+use App\Http\Controllers\LockerController;
 
 class mqttsub extends Command
 {
@@ -19,7 +21,7 @@ class mqttsub extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = "Update locker's status";
 
     /**
      * Execute the console command.
@@ -29,8 +31,14 @@ class mqttsub extends Command
     public function handle()
     {
         $mqtt = MQTT::connection();
+        echo sprintf("MQTT is connected\r\n");
         $mqtt->subscribe('locker/status', function (string $topic, string $message) {
-            echo sprintf('Received QoS level 1 message on topic [%s]: %s', $topic, $message);
+            echo sprintf("Received QoS level 0 message on topic [%s]: \r\n%s\r\n", $topic, $message);
+            DB::table("lockers")->where('lockUp',0)->update(['lockUp'=>1]);
+            $lockerEncodings=explode(",",$message);
+            foreach($lockerEncodings as $lockerEncoding){
+                DB::table("lockers")->where('lockerEncoding',$lockerEncoding)->update(['lockUp'=>0]);
+            }
         }, 0);
         $mqtt->loop(true);
     }

@@ -58,7 +58,7 @@ class UserController extends Controller
         //     'phone' => '0987654321',
         //     'permission' => 0,
         // ]);
-        return DB::table('users')->get();
+        return user::get();
     }
 
     /**
@@ -68,7 +68,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return DB::table('users')->get();
+        return user::get();
     }
 
     /**

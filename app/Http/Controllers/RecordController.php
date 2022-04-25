@@ -17,7 +17,7 @@ class RecordController extends Controller
         } else {
             $locker = locker::where("lockerNo", "=", $request["lockerNo"])->first();
             if ($locker == null) {
-                return response("lockerNo error " . $request["lockerNo"], 400);
+                return response("lockerNo error" . $request["lockerNo"], 400);
             } else {
                 $records = record::where("lockerId", "=", $locker->id)->get(['userId', 'created_at AS time', 'description']);
                 $user = user::where("id", "=", $locker->userId)->first(['id', 'name', 'email', 'phone', 'cardId']);
