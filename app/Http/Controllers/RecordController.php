@@ -3,10 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\record;
+use App\Models\locker;
+use App\Models\user;
 use Illuminate\Http\Request;
 
 class RecordController extends Controller
 {
+
+    public function record(Request $request)
+    {
+        if ($request["lockerNo"] == null) {
+            return response("lockerNo is null", 400);
+        } else {
+            $locker = locker::where("lockerNo", "=", $request["lockerNo"])->first();
+            if ($locker == null) {
+                return response("lockerNo error " . $request["lockerNo"], 400);
+            } else {
+                $records = record::where("lockerId", "=", $locker->id)->get(['userId', 'created_at AS time', 'description']);
+                $user = user::where("id", "=", $locker->userId)->first(['id', 'name', 'email', 'phone', 'cardId']);
+                if ($user == null) {
+                    return response("didn't have user", 400);
+                } else {
+                    return response()->json(["user" => $user, "records" => $records], 200);
+                }
+            }
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *

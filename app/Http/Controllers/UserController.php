@@ -147,7 +147,7 @@ class UserController extends Controller
                         'cardId' => $request['cardId'],
                         'phone' => $request['phone']
                     ]);
-                    return response($user->first(), 200);
+                    return response($user->first(['id','name','email','phone','cardId']), 200);
                 }
             }
         }

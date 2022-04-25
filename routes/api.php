@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LockerController;
+use App\Http\Controllers\RecordController;
 use App\Http\Middleware\EnsureTokenIsValid;
 
 /*
@@ -26,3 +27,5 @@ Route::get('register',[UserController::class,'register']);
 
 Route::post('lockup',[LockerController::class,'lockup']);
 Route::get('locker',[LockerController::class,'locker'])->middleware(EnsureTokenIsValid::class);
+
+Route::post('record',[RecordController::class,'record'])->middleware(EnsureTokenIsValid::class);
