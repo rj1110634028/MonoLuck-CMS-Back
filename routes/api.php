@@ -5,7 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LockerController;
 use App\Http\Controllers\RecordController;
-use App\Http\Middleware\EnsureTokenIsValid;
+use App\Http\Middleware\EnsurePermissionIsLVL1;
+use App\Http\Middleware\EnsurePermissionIsRoot;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,10 +23,10 @@ use App\Http\Middleware\EnsureTokenIsValid;
 //     return $request->user();
 // });
 Route::post('login',[UserController::class,'login']);
-Route::post('update',[UserController::class,'update'])->middleware(EnsureTokenIsValid::class);
+Route::post('update',[UserController::class,'update'])->middleware(EnsurePermissionIsRoot::class);
 Route::get('register',[UserController::class,'register']);
 
-Route::post('lockup',[LockerController::class,'lockup']);
-Route::get('locker',[LockerController::class,'locker'])->middleware(EnsureTokenIsValid::class);
+Route::post('unlock',[LockerController::class,'unlock'])->middleware(EnsurePermissionIsLVL1::class);
+Route::get('locker',[LockerController::class,'locker'])->middleware(EnsurePermissionIsRoot::class);
 
-Route::post('record',[RecordController::class,'record'])->middleware(EnsureTokenIsValid::class);
+Route::get('record/{lockerNo}',[RecordController::class,'record'])->middleware(EnsurePermissionIsRoot::class);
