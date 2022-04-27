@@ -7,19 +7,24 @@ use App\Models\locker;
 use App\Models\user;
 use Illuminate\Http\Request;
 
+
 class RecordController extends Controller
 {
 
-    public function record(Request $request)
+    public function record($lockerNo)
     {
-        if ($request["lockerNo"] == null) {
+        if ($lockerNo == null) {
             return response("lockerNo is null", 400);
         } else {
-            $locker = locker::where("lockerNo", "=", $request["lockerNo"])->first();
+            $locker = locker::where("lockerNo", "=", $lockerNo)->first();
             if ($locker == null) {
-                return response("lockerNo error" . $request["lockerNo"], 400);
+                return response("lockerNo error" . $lockerNo, 400);
             } else {
-                $records = record::where("lockerId", "=", $locker->id)->get(['userId', 'created_at AS time', 'description']);
+                $records = record::select([
+                    'name' => user::select('name')->whereColumn('userId', 'users.id'), 'created_at AS time', 'description'
+                ])
+                    ->where("lockerId", "=", $locker->id)
+                    ->orderByDesc('created_at')->get();
                 $user = user::where("id", "=", $locker->userId)->first(['id', 'name', 'email', 'phone', 'cardId']);
                 if ($user == null) {
                     return response("didn't have user", 400);
