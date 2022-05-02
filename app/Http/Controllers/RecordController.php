@@ -21,7 +21,10 @@ class RecordController extends Controller
                 return response("lockerNo error" . $lockerNo, 400);
             } else {
                 $records = record::select([
-                    'name' => user::select('name')->whereColumn('userId', 'users.id'), 'created_at AS time', 'description'
+                    'name' => user::select('name')->whereColumn('userId', 'users.id'),
+                    'permission' => user::select('permission')->whereColumn('userId', 'users.id'),
+                    'created_at AS time',
+                    'description'
                 ])
                     ->where("lockerId", "=", $locker->id)
                     ->orderByDesc('created_at')->get();

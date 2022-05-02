@@ -17,9 +17,9 @@ return new class extends Migration
             $table->increments('id');
             $table->integer('permission')->default(5);
             $table->string('name',40);
-            $table->string('password',64);
+            $table->string('password',80);
             $table->string('cardId',20)->unique()->nullable();
-            $table->string('phone',10)->unique()->nullable();
+            $table->string('phone',20)->unique()->nullable();
             $table->string('email',80)->unique();
             $table->dateTime('token_expire_time')->nullable();
             $table->rememberToken();
