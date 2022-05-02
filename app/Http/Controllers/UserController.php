@@ -43,47 +43,7 @@ class UserController extends Controller
         return response()->json(['message' => $response], $httpstatus);
     }
 
-    public function addUser(Request $request)
-    {
-        if ($request["lockerNo"] != null && $request['email'] != NULL && $request['name'] != NULL && $request['cardId'] != NULL && $request['phone'] != NULL) {
-            $locker = locker::where("lockerNo", "=", $request["lockerNo"]);
-            if ($locker->first() != null) {
-                if ($locker->first()->userId == null) {
-                    if (preg_match("/^8869\d{8}$/", $request['phone'])) {
-                        $request['phone'] = "0" . ltrim($request['phone'], "886");
-                    }
-
-                    if (!preg_match("/^09\d{8}$/", $request['phone'])) {
-                        return response("error", 400);
-                    } elseif (!preg_match("/^[\w!\#$%&'*+\-\/=?^_`{|}~]+(\.[\w!#$%&'*+\-\/=?^_`{|}~]+)*@[\w\-]+(\.[\w\-]+)+$/", $request['email'])) {
-                        return response("error", 400);
-                    } else {
-                        try {
-                            $newUser = new user();
-                            $newUser->email = $request["email"];
-                            $newUser->name = $request["name"];
-                            $newUser->password = Hash::make($request["password"]);
-                            $newUser->phone = $request["phone"];
-                            $newUser->cardId = $request['cardId'];
-                            $newUser->save();
-
-                            $locker->update(["userId" => $newUser->id]);
-                        } catch (\Exception $e) {
-                            return response($e->getMessage(), 400);
-                        }
-                    }
-                } else {
-                    return response("error", 400);
-                }
-            } else {
-                return response("error", 400);
-            }
-        } else {
-            return response("error", 400);
-        }
-    }
-
-    public function register(Request $request)
+    public function register()
     {
         $registrations = new user();
         $registrations->email = '000@example.com';
@@ -137,7 +97,37 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if ($request["lockerNo"] != null && $request['email'] != NULL && $request['name'] != NULL && $request['cardId'] != NULL && $request['phone'] != NULL) {
+            $locker = locker::where("lockerNo", "=", $request["lockerNo"]);
+            if ($locker->first() != null) {
+                if ($locker->first()->userId == null) {
+                    if (preg_match("/^8869\d{8}$/", $request['phone'])) {
+                        $request['phone'] = "0" . ltrim($request['phone'], "886");
+                    }
+
+                    if (!preg_match("/^09\d{8}$/", $request['phone'])) {
+                        return response("error", 400);
+                    } elseif (!preg_match("/^[\w!\#$%&'*+\-\/=?^_`{|}~]+(\.[\w!#$%&'*+\-\/=?^_`{|}~]+)*@[\w\-]+(\.[\w\-]+)+$/", $request['email'])) {
+                        return response("error", 400);
+                    } else {
+                        try {
+                            $newUser = new user();
+                            $newUser->email = $request["email"];
+                            $newUser->name = $request["name"];
+                            $newUser->password = Hash::make($request["password"]);
+                            $newUser->phone = $request["phone"];
+                            $newUser->cardId = $request['cardId'];
+                            $newUser->save();
+
+                            $locker->update(["userId" => $newUser->id]);
+                            return response("success", 200);
+                        } catch (\Exception $e) {
+                            return response($e->getMessage(), 400);
+                        }
+                    }
+                } else return response("error", 400);
+            } else return response("error", 400);
+        } else return response("error", 400);
     }
 
     /**
@@ -169,9 +159,9 @@ class UserController extends Controller
      * @param  \App\Models\user  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-        if ($request['id'] == NULL || $request['email'] == NULL || $request['name'] == NULL || $request['cardId'] == NULL || $request['phone'] == NULL) {
+        if ($request['email'] == NULL || $request['name'] == NULL || $request['cardId'] == NULL || $request['phone'] == NULL) {
             return response("error", 400);
         } else {
             // if (preg_match("/^09\d{8}$/", $request['phone'])) {
@@ -188,7 +178,7 @@ class UserController extends Controller
             } elseif (strlen($request['name']) > 40) {
                 return response("name error", 400);
             } else {
-                $user = user::where('id', '=', $request['id']);
+                $user = user::where('id', '=', $id);
                 if ($user->first() == NULL) {
                     return response("id error", 400);
                 } else {

@@ -23,10 +23,14 @@ use App\Http\Middleware\EnsurePermissionIsRoot;
 //     return $request->user();
 // });
 Route::post('login',[UserController::class,'login']);
-Route::post('update',[UserController::class,'update'])->middleware(EnsurePermissionIsRoot::class);
-Route::get('register',[UserController::class,'register']);
+Route::patch('user/{id}',[UserController::class,'update'])->middleware(EnsurePermissionIsRoot::class);
+Route::post('user',[UserController::class,'store'])->middleware(EnsurePermissionIsRoot::class);
 
 Route::post('unlock',[LockerController::class,'unlock'])->middleware(EnsurePermissionIsLVL1::class);
-Route::get('locker',[LockerController::class,'locker'])->middleware(EnsurePermissionIsRoot::class);
+Route::get('locker',[LockerController::class,'index'])->middleware(EnsurePermissionIsRoot::class);
 
-Route::get('record/{lockerNo}',[RecordController::class,'record'])->middleware(EnsurePermissionIsRoot::class);
+Route::get('record/{lockerNo}',[RecordController::class,'show'])->middleware(EnsurePermissionIsRoot::class);
+
+
+
+Route::get('register',[UserController::class,'register']);

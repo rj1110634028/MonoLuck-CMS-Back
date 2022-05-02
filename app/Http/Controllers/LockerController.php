@@ -25,7 +25,7 @@ class LockerController extends Controller
                     $record->userId = $rootuser->id;
                 } else if ($rootuser->permission == 0) {
                     return response("descriptionIsNull", 400);
-                }else{
+                } else {
                     $record->userId = $user->id;
                 }
                 $record->lockerId = $locker->id;
@@ -33,18 +33,8 @@ class LockerController extends Controller
                 MQTT::publish('locker/unlock', $locker->lockerEncoding);
 
                 return response("success", 200);
-            } else {
-                return response("error", 400);
-            }
-        } else {
-            return response("error", 400);
-        }
-    }
-
-    public function locker()
-    {
-        $locker = locker::orderBy('id', 'asc')->get(['id', 'lockerNo', 'lockUp', 'userId', 'error']);
-        return response($locker, 200);
+            } else return response("error", 400);
+        } else return response("error", 400);
     }
 
     /**
@@ -54,7 +44,8 @@ class LockerController extends Controller
      */
     public function index()
     {
-        //
+        $locker = locker::orderBy('id', 'asc')->get(['id', 'lockerNo', 'lockUp', 'userId', 'error']);
+        return response($locker, 200);
     }
 
     /**

@@ -11,33 +11,6 @@ use Illuminate\Http\Request;
 class RecordController extends Controller
 {
 
-    public function record($lockerNo)
-    {
-        if ($lockerNo == null) {
-            return response("lockerNo is null", 400);
-        } else {
-            $locker = locker::where("lockerNo", "=", $lockerNo)->first();
-            if ($locker == null) {
-                return response("lockerNo error" . $lockerNo, 400);
-            } else {
-                $records = record::select([
-                    'name' => user::select('name')->whereColumn('userId', 'users.id'),
-                    'permission' => user::select('permission')->whereColumn('userId', 'users.id'),
-                    'created_at AS time',
-                    'description'
-                ])
-                    ->where("lockerId", "=", $locker->id)
-                    ->orderByDesc('created_at')->get();
-                $user = user::where("id", "=", $locker->userId)->first(['id', 'name', 'email', 'phone', 'cardId']);
-                if ($user == null) {
-                    return response("didn't have user", 400);
-                } else {
-                    return response()->json(["user" => $user, "records" => $records], 200);
-                }
-            }
-        }
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -75,9 +48,31 @@ class RecordController extends Controller
      * @param  \App\Models\record  $record
      * @return \Illuminate\Http\Response
      */
-    public function show(record $record)
+    public function show(record $record, $lockerNo)
     {
-        //
+        if ($lockerNo == null) {
+            return response("lockerNo is null", 400);
+        } else {
+            $locker = locker::where("lockerNo", "=", $lockerNo)->first();
+            if ($locker == null) {
+                return response("lockerNo error" . $lockerNo, 400);
+            } else {
+                $records = record::select([
+                    'name' => user::select('name')->whereColumn('userId', 'users.id'),
+                    'permission' => user::select('permission')->whereColumn('userId', 'users.id'),
+                    'created_at AS time',
+                    'description'
+                ])
+                    ->where("lockerId", "=", $locker->id)
+                    ->orderByDesc('created_at')->get();
+                $user = user::where("id", "=", $locker->userId)->first(['id', 'name', 'email', 'phone', 'cardId']);
+                if ($user == null) {
+                    return response("didn't have user", 400);
+                } else {
+                    return response()->json(["user" => $user, "records" => $records], 200);
+                }
+            }
+        }
     }
 
     /**
