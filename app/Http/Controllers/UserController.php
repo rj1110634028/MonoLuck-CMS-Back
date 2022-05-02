@@ -43,32 +43,6 @@ class UserController extends Controller
         return response()->json(['message' => $response], $httpstatus);
     }
 
-    public function register()
-    {
-        $registrations = new user();
-        $registrations->email = '000@example.com';
-        $registrations->name = 'root';
-        $registrations->password = Hash::make('root');
-        $registrations->phone = '0987654321';
-        $registrations->permission = 0;
-        $registrations->save();
-        $registrations = new user();
-        $registrations->email = '001@example.com';
-        $registrations->name = 'root2';
-        $registrations->password = Hash::make('root');
-        $registrations->phone = '0912345678';
-        $registrations->permission = 0;
-        $registrations->save();
-        $registrations = new user();
-        $registrations->email = '002@example.com';
-        $registrations->name = 'pi';
-        $registrations->password = Hash::make('pi');
-        $registrations->phone = '0900000000';
-        $registrations->permission = 0;
-        $registrations->save();
-        return user::get();
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -101,13 +75,11 @@ class UserController extends Controller
             $locker = locker::where("lockerNo", "=", $request["lockerNo"]);
             if ($locker->first() != null) {
                 if ($locker->first()->userId == null) {
-                    if (preg_match("/^8869\d{8}$/", $request['phone'])) {
-                        $request['phone'] = "0" . ltrim($request['phone'], "886");
+                    if (preg_match("/^09\d{8}$/", $request['phone'])) {
+                        $request['phone'] = "886" . ltrim($request['phone'], "0");
                     }
-
-                    if (!preg_match("/^09\d{8}$/", $request['phone'])) {
-                        return response("error", 400);
-                    } elseif (!preg_match("/^[\w!\#$%&'*+\-\/=?^_`{|}~]+(\.[\w!#$%&'*+\-\/=?^_`{|}~]+)*@[\w\-]+(\.[\w\-]+)+$/", $request['email'])) {
+        
+                    if (!preg_match("/^[\w!\#$%&'*+\-\/=?^_`{|}~]+(\.[\w!#$%&'*+\-\/=?^_`{|}~]+)*@[\w\-]+(\.[\w\-]+)+$/", $request['email'])) {
                         return response("error", 400);
                     } else {
                         try {
@@ -164,16 +136,11 @@ class UserController extends Controller
         if ($request['email'] == NULL || $request['name'] == NULL || $request['cardId'] == NULL || $request['phone'] == NULL) {
             return response("error", 400);
         } else {
-            // if (preg_match("/^09\d{8}$/", $request['phone'])) {
-            //     $request['phone'] = "886" . ltrim($request['phone'], "0");
-            // }
-            if (preg_match("/^8869\d{8}$/", $request['phone'])) {
-                $request['phone'] = "0" . ltrim($request['phone'], "886");
+            if (preg_match("/^09\d{8}$/", $request['phone'])) {
+                $request['phone'] = "886" . ltrim($request['phone'], "0");
             }
 
-            if (!preg_match("/^09\d{8}$/", $request['phone'])) {
-                return response("phone error", 400);
-            } elseif (!preg_match("/^[\w!\#$%&'*+\-\/=?^_`{|}~]+(\.[\w!#$%&'*+\-\/=?^_`{|}~]+)*@[\w\-]+(\.[\w\-]+)+$/", $request['email'])) {
+            if (!preg_match("/^[\w!\#$%&'*+\-\/=?^_`{|}~]+(\.[\w!#$%&'*+\-\/=?^_`{|}~]+)*@[\w\-]+(\.[\w\-]+)+$/", $request['email'])) {
                 return response("email error", 400);
             } elseif (strlen($request['name']) > 40) {
                 return response("name error", 400);

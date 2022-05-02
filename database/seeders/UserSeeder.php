@@ -25,11 +25,29 @@ class UserSeeder extends Seeder
                 $locker->update(['userId' => $u->id]);
             }
         });
-        locker::insert([
-            'permission' => 1,
+        user::create([
+            'permission' => 4,
             'email' => 'pi',
             'name' => 'pi',
             'password' => Hash::make('hP4VspmxA6YtIltVtzXioPY3xixgrvxLTMpvkkefWpRjmgpRMdGZ1FtoWWNx'),
+        ]);
+        user::create([
+            'permission' => 0,
+            'email' => '000@example.com',
+            'name' => 'root',
+            'password' => Hash::make('root'),
+        ]);
+        user::create([
+            'permission' => 0,
+            'email' => '002@example.com',
+            'name' => 'root2',
+            'password' => Hash::make('root'),
+        ]);
+        user::create([
+            'permission' => 0,
+            'email' => '003@example.com',
+            'name' => 'root3',
+            'password' => Hash::make('root'),
         ]);
     }
 }

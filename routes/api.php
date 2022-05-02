@@ -31,6 +31,3 @@ Route::get('locker',[LockerController::class,'index'])->middleware(EnsurePermiss
 
 Route::get('record/{lockerNo}',[RecordController::class,'show'])->middleware(EnsurePermissionIsRoot::class);
 
-
-
-Route::get('register',[UserController::class,'register']);
