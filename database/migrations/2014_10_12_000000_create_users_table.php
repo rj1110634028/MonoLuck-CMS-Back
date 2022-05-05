@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('permission')->default(5);
+            $table->integer('permission')->default(1);
             $table->string('name',40);
             $table->string('password',80);
             $table->string('cardId',20)->unique()->nullable();

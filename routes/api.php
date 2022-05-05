@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LockerController;
 use App\Http\Controllers\RecordController;
-use App\Http\Middleware\EnsurePermissionIsLVL1;
+use App\Http\Middleware\UnlockMiddleware;
 use App\Http\Middleware\EnsurePermissionIsRoot;
 
 /*
@@ -26,8 +26,8 @@ Route::post('login',[UserController::class,'login']);
 Route::patch('user/{id}',[UserController::class,'update'])->middleware(EnsurePermissionIsRoot::class);
 Route::post('user',[UserController::class,'store'])->middleware(EnsurePermissionIsRoot::class);
 
-Route::post('unlock',[LockerController::class,'unlock'])->middleware(EnsurePermissionIsLVL1::class);
 Route::get('locker',[LockerController::class,'index'])->middleware(EnsurePermissionIsRoot::class);
+Route::post('unlock',[LockerController::class,'unlock'])->middleware(UnlockMiddleware::class);
 
 Route::get('record/{lockerNo}',[RecordController::class,'show'])->middleware(EnsurePermissionIsRoot::class);
 

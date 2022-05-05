@@ -80,7 +80,7 @@ class UserController extends Controller
                     }
         
                     if (!preg_match("/^[\w!\#$%&'*+\-\/=?^_`{|}~]+(\.[\w!#$%&'*+\-\/=?^_`{|}~]+)*@[\w\-]+(\.[\w\-]+)+$/", $request['email'])) {
-                        return response("error", 400);
+                        return response("emailerror", 400);
                     } else {
                         try {
                             $newUser = new user();
@@ -98,8 +98,8 @@ class UserController extends Controller
                         }
                     }
                 } else return response("error", 400);
-            } else return response("error", 400);
-        } else return response("error", 400);
+            } else return response("lockNoerror", 400);
+        } else return response("dataerror", 400);
     }
 
     /**

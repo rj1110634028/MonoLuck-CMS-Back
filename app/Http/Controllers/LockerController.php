@@ -20,21 +20,21 @@ class LockerController extends Controller
                 $rootuser = user::where('remember_token', '=', $token)->first();
                 $record = new record;
 
-                if ($request['description'] != null) {
-                    $record->description = $request['description'];
-                    $record->userId = $rootuser->id;
-                } else if ($rootuser->permission == 0) {
+                if ($token == 'hP4VspmxA6YtIltVtzXioPY3xixgrvxLTMpvkkefWpRjmgpRMdGZ1FtoWWNx') {
+                    $record->userId = $user->id;
+                } else if ($request['description'] == null) {
                     return response("descriptionIsNull", 400);
                 } else {
-                    $record->userId = $user->id;
+                    $record->description = $request['description'];
+                    $record->userId = $rootuser->id;
                 }
                 $record->lockerId = $locker->id;
                 $record->save();
                 MQTT::publish('locker/unlock', $locker->lockerEncoding);
 
                 return response("success", 200);
-            } else return response("error", 400);
-        } else return response("error", 400);
+            } else return response("lockererror", 400);
+        } else return response("cardIderror", 400);
     }
 
     /**

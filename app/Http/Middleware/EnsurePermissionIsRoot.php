@@ -31,7 +31,7 @@ class EnsurePermissionIsRoot
                     if (strtotime($user->first()->token_expire_time) < time()) {
                         return response("token_expired", 401);
                     } else {
-                        $user->update(['token_expire_time' => date('Y-m-d H:i:s', time() + 60 * 10)]);
+                        $user->update(['token_expire_time' => date('Y-m-d H:i:s', time() + 60 * 60)]);
                         return $next($request);
                     }
                 }

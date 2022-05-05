@@ -25,12 +25,7 @@ class UserSeeder extends Seeder
                 $locker->update(['userId' => $u->id]);
             }
         });
-        user::create([
-            'permission' => 4,
-            'email' => 'pi',
-            'name' => 'pi',
-            'password' => Hash::make('hP4VspmxA6YtIltVtzXioPY3xixgrvxLTMpvkkefWpRjmgpRMdGZ1FtoWWNx'),
-        ]);
+        //create test RootUser
         user::create([
             'permission' => 0,
             'email' => '000@example.com',
