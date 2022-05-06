@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\locker;
-use App\Models\user;
-use App\Models\record;
+use App\Models\Locker;
+use App\Models\User;
+use App\Models\Record;
 use Illuminate\Http\Request;
 use PhpMqtt\Client\Facades\MQTT;
 
@@ -12,13 +12,13 @@ class LockerController extends Controller
 {
     public function unlock(Request $request)
     {
-        $user = user::where('cardId', '=', $request['cardId'])->first();
+        $user = User::where('cardId', '=', $request['cardId'])->first();
         if ($user != NULL) {
-            $locker = locker::where('userId', '=', $user->id)->first();
+            $locker = Locker::where('userId', '=', $user->id)->first();
             if ($locker != NULL) {
                 $token = $request->header('token');
-                $rootuser = user::where('remember_token', '=', $token)->first();
-                $record = new record;
+                $rootuser = User::where('remember_token', '=', $token)->first();
+                $record = new Record;
 
                 if ($token == 'hP4VspmxA6YtIltVtzXioPY3xixgrvxLTMpvkkefWpRjmgpRMdGZ1FtoWWNx') {
                     $record->userId = $user->id;
@@ -44,7 +44,7 @@ class LockerController extends Controller
      */
     public function index()
     {
-        $locker = locker::orderBy('id', 'asc')->get(['id', 'lockerNo', 'lockUp', 'userId', 'error']);
+        $locker = Locker::orderBy('id', 'asc')->get(['id', 'lockerNo', 'lockUp', 'userId', 'error']);
         return response($locker, 200);
     }
 
@@ -72,7 +72,7 @@ class LockerController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\locker  $locker
+     * @param  \App\Models\Locker  $locker
      * @return \Illuminate\Http\Response
      */
     public function show(locker $locker)
@@ -83,7 +83,7 @@ class LockerController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\locker  $locker
+     * @param  \App\Models\Locker  $locker
      * @return \Illuminate\Http\Response
      */
     public function edit(locker $locker)
@@ -95,7 +95,7 @@ class LockerController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\locker  $locker
+     * @param  \App\Models\Locker  $locker
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, locker $locker)
@@ -106,7 +106,7 @@ class LockerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\locker  $locker
+     * @param  \App\Models\Locker  $locker
      * @return \Illuminate\Http\Response
      */
     public function destroy(locker $locker)

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\user;
-use App\Models\locker;
+use App\Models\User;
+use App\Models\Locker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -50,7 +50,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return user::get();
+        return User::get();
     }
 
     /**
@@ -72,7 +72,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         if ($request["lockerNo"] != null && $request['email'] != NULL && $request['name'] != NULL && $request['cardId'] != NULL && $request['phone'] != NULL) {
-            $locker = locker::where("lockerNo", "=", $request["lockerNo"]);
+            $locker = Locker::where("lockerNo", "=", $request["lockerNo"]);
             if ($locker->first() != null) {
                 if ($locker->first()->userId == null) {
                     if (preg_match("/^09\d{8}$/", $request['phone'])) {
@@ -105,10 +105,10 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\user  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(user $user)
+    public function show(User $user)
     {
         //
     }
@@ -116,10 +116,10 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\user  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(user $user)
+    public function edit(User $user)
     {
         //
     }
@@ -128,7 +128,7 @@ class UserController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\user  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -145,7 +145,7 @@ class UserController extends Controller
             } elseif (strlen($request['name']) > 40) {
                 return response("name error", 400);
             } else {
-                $user = user::where('id', '=', $id);
+                $user = User::where('id', '=', $id);
                 if ($user->first() == NULL) {
                     return response("id error", 400);
                 } else {
@@ -168,10 +168,10 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\user  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(user $user)
+    public function destroy(User $user)
     {
         //
     }
