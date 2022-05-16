@@ -133,7 +133,7 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if ($request['email'] == NULL || $request['name'] == NULL || $request['cardId'] == NULL || $request['phone'] == NULL) {
+        if ($id == NULL || $request['email'] == NULL || $request['name'] == NULL || $request['cardId'] == NULL || $request['phone'] == NULL) {
             return response("error", 400);
         } else {
             if (preg_match("/^09\d{8}$/", $request['phone'])) {

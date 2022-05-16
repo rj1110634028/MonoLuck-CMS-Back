@@ -18,13 +18,14 @@ class UserSeeder extends Seeder
     public function run()
     {
 
-        user::factory(20)->create()->each(function ($u) {
-            locker::insert([]);
-            $locker = locker::where('userId', '=', NULL)->where('lockerNo', '<>', NULL)->inRandomOrder()->first();
-            if ($locker != NULL) {
-                $locker->update(['userId' => $u->id]);
-            }
-        });
+        // user::factory(20)->create()->each(function ($u) {
+        //     locker::insert([]);
+        //     $locker = locker::where('userId', '=', NULL)->where('lockerNo', '<>', NULL)->inRandomOrder()->first();
+        //     if ($locker != NULL) {
+        //         $locker->update(['userId' => $u->id]);
+        //     }
+        // });
+        
         //create test RootUser
         user::create([
             'permission' => 0,
