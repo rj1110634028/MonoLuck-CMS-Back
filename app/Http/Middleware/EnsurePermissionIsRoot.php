@@ -25,7 +25,7 @@ class EnsurePermissionIsRoot
             if ($user->first() == NULL) {
                 return response("no_login", 401);
             } else {
-                if ($user->first()->permission > 0) {
+                if ($user->first()->permission != 0) {
                     return response("token_expired", 401);
                 } else {
                     if (strtotime($user->first()->token_expire_time) < time()) {
