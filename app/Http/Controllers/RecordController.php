@@ -50,28 +50,32 @@ class RecordController extends Controller
      */
     public function show(Record $record, $lockerNo)
     {
-        if ($lockerNo == null) {
-            return response("lockerNo is null", 400);
-        } else {
-            $locker = Locker::where("lockerNo", "=", $lockerNo)->first();
-            if ($locker == null) {
-                return response("lockerNo error" . $lockerNo, 400);
+        try{
+            if ($lockerNo == null) {
+                return response("lockerNo is null", 400);
             } else {
-                $records = Record::select([
-                    'name' => User::select('name')->whereColumn('userId', 'users.id'),
-                    'permission' => User::select('permission')->whereColumn('userId', 'users.id'),
-                    'created_at AS time',
-                    'description'
-                ])
-                    ->where("lockerId", "=", $locker->id)
-                    ->orderByDesc('created_at')->get();
-                $user = User::where("id", "=", $locker->userId)->first(['id', 'name', 'email', 'phone', 'cardId']);
-                if ($user == null) {
-                    return response("didn't have user", 400);
+                $locker = Locker::where("lockerNo", "=", $lockerNo)->first();
+                if ($locker == null) {
+                    return response("lockerNo error" . $lockerNo, 400);
                 } else {
-                    return response()->json(["user" => $user, "records" => $records], 200);
+                    $records = Record::select([
+                        'name' => User::select('name')->whereColumn('userId', 'users.id'),
+                        'permission' => User::select('permission')->whereColumn('userId', 'users.id'),
+                        'created_at AS time',
+                        'description'
+                    ])
+                        ->where("lockerId", "=", $locker->id)
+                        ->orderByDesc('created_at')->get();
+                    $user = User::where("id", "=", $locker->userId)->first(['id', 'name', 'email', 'phone', 'cardId']);
+                    if ($user == null) {
+                        return response("didn't have user", 400);
+                    } else {
+                        return response()->json(["user" => $user, "records" => $records], 200);
+                    }
                 }
             }
+        }catch (\Exception $e){
+            echo sprintf($e->getMessage());
         }
     }
 
