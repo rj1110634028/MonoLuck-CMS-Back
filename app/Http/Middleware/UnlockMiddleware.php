@@ -23,21 +23,7 @@ class UnlockMiddleware
         } elseif ($token == 'hP4VspmxA6YtIltVtzXioPY3xixgrvxLTMpvkkefWpRjmgpRMdGZ1FtoWWNx') {
             return $next($request);
         } else {
-            $user = DB::table('users')->where('remember_token', '=', $token);
-            if ($user->first() == NULL) {
-                return response("no_login", 401);
-            } else {
-                if ($user->first()->permission > 1) {
-                    return response("token_expired", 401);
-                } else {
-                    if (strtotime($user->first()->token_expire_time) < time()) {
-                        return response("token_expired", 401);
-                    } else {
-                        $user->update(['token_expire_time' => date('Y-m-d H:i:s', time() + 60 * 60)]);
-                        return $next($request);
-                    }
-                }
-            }
+            return response("token_expired", 401);
         }
     }
 }

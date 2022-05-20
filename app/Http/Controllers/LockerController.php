@@ -12,27 +12,40 @@ class LockerController extends Controller
 {
     public function unlock(Request $request)
     {
+        $locker = Locker::where('lockerNo', '=', $request['lockerNo'])->first();
+        
+        if ($locker != NULL) {
+            $token = $request->header('token');
+            $rootuser = User::where('remember_token', '=', $token)->first();
+
+            if ($request['description'] == null) {
+                return response("descriptionIsNull", 400);
+            } else {
+                $record = new Record;
+                $record->description = $request['description'];
+                $record->userId = $rootuser->id;
+                $record->lockerId = $locker->id;
+                $record->save();
+            }
+            MQTT::publish('locker/unlock', $locker->lockerEncoding);
+
+            return response("success", 200);
+        } else return response("lockererror", 400);
+    }
+
+    public function RPIunlock(Request $request)
+    {
         $user = User::where('cardId', '=', $request['cardId'])->first();
         if ($user != NULL) {
             $locker = Locker::where('userId', '=', $user->id)->first();
             if ($locker != NULL) {
-                $token = $request->header('token');
-                $rootuser = User::where('remember_token', '=', $token)->first();
                 $record = new Record;
-
-                if ($token == 'hP4VspmxA6YtIltVtzXioPY3xixgrvxLTMpvkkefWpRjmgpRMdGZ1FtoWWNx') {
-                    $record->userId = $user->id;
-                } else if ($request['description'] == null) {
-                    return response("descriptionIsNull", 400);
-                } else {
-                    $record->description = $request['description'];
-                    $record->userId = $rootuser->id;
-                }
+                $record->userId = $user->id;
                 $record->lockerId = $locker->id;
                 $record->save();
-                MQTT::publish('locker/unlock', $locker->lockerEncoding);
+                // MQTT::publish('locker/unlock', $locker->lockerEncoding);
 
-                return response("success", 200);
+                return response($locker->lockerEncoding, 200);
             } else return response("lockererror", 400);
         } else return response("cardIderror", 400);
     }

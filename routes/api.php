@@ -22,12 +22,18 @@ use App\Http\Middleware\EnsurePermissionIsRoot;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
 Route::post('login',[UserController::class,'login']);
-Route::patch('user/{id}',[UserController::class,'update'])->middleware(EnsurePermissionIsRoot::class);
-Route::post('user',[UserController::class,'store'])->middleware(EnsurePermissionIsRoot::class);
 
-Route::get('locker',[LockerController::class,'index'])->middleware(EnsurePermissionIsRoot::class);
-Route::post('unlock',[LockerController::class,'unlock'])->middleware(UnlockMiddleware::class);
+Route::middleware([EnsurePermissionIsRoot::class])->group(function () {
+    Route::patch('user/{id}',[UserController::class,'update']);
+    Route::post('user',[UserController::class,'store']);
 
-Route::get('record/{lockerNo}',[RecordController::class,'show'])->middleware(EnsurePermissionIsRoot::class);
+    Route::get('locker',[LockerController::class,'index']);
+    Route::post('unlock',[LockerController::class,'unlock']);
+
+    Route::get('record/{lockerNo}',[RecordController::class,'show']);
+});
+
+Route::post('RPIunlock',[LockerController::class,'RPIunlock'])->middleware(UnlockMiddleware::class);
 
