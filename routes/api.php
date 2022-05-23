@@ -24,7 +24,7 @@ use App\Http\Middleware\EnsurePermissionIsRoot;
 // });
 
 Route::post('login',[UserController::class,'login']);
-Route::post('logout',[UserController::class,'logout']);
+Route::get('logout',[UserController::class,'logout']);
 
 Route::middleware([EnsurePermissionIsRoot::class])->group(function () {
     Route::patch('user/{id}',[UserController::class,'update']);

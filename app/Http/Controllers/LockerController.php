@@ -12,31 +12,37 @@ class LockerController extends Controller
 {
     public function unlock(Request $request)
     {
-        $locker = Locker::where('lockerNo', '=', $request['lockerNo'])->first();
-        
-        if ($locker != NULL) {
+        try {
+            $request->validate([
+                'lockerNo' => 'required|exists:lockers',
+                'description' => 'required',
+            ]);
+            $locker = Locker::where('lockerNo', '=', $request['lockerNo']);
+
             $token = $request->header('token');
             $rootuser = User::where('remember_token', '=', $token)->first();
 
-            if ($request['description'] == null) {
-                return response("descriptionIsNull", 400);
-            } else {
-                $record = new Record;
-                $record->description = $request['description'];
-                $record->userId = $rootuser->id;
-                $record->lockerId = $locker->id;
-                $record->save();
-            }
-            MQTT::publish('locker/unlock', $locker->lockerEncoding);
+            $record = new Record;
+            $record->description = $request['description'];
+            $record->userId = $rootuser->id;
+            $record->lockerId = $locker->first()->id;
+            $record->save();
 
+            MQTT::publish('locker/unlock', $locker->first()->lockerEncoding);
+            $locker->update(['lockUp' => 0]);
             return response("success", 200);
-        } else return response("lockererror", 400);
+        } catch (\Exception $e) {
+            return response($e->getMessage(), 400);
+        }
     }
 
     public function RPIunlock(Request $request)
     {
-        $user = User::where('cardId', '=', $request['cardId'])->first();
-        if ($user != NULL) {
+        try {
+            $request->validate([
+                'cardId' => 'required|exists:users',
+            ]);
+            $user = User::where('cardId', '=', $request['cardId'])->first();
             $locker = Locker::where('userId', '=', $user->id)->first();
             if ($locker != NULL) {
                 $record = new Record;
@@ -47,7 +53,9 @@ class LockerController extends Controller
 
                 return response($locker->lockerEncoding, 200);
             } else return response("lockererror", 400);
-        } else return response("cardIderror", 400);
+        } catch (\Exception $e) {
+            return response($e->getMessage(), 400);
+        }
     }
 
     /**

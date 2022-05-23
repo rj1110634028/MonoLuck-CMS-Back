@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Locker;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -27,7 +28,7 @@ class UserController extends Controller
             //建立token並寫入使用時間
             $user = User::where('email', '=', $request["email"])->first();
             $user->remember_token =  $loginToken;
-            $user->token_expire_time = date('Y-m-d H:i:s', time() + 10 * 60);
+            $user->token_expire_time = date('Y-m-d H:i:s', time() + 60 * 60);
             $user->save();
             $response = array(
                 "permission" => $user->permission,
@@ -43,14 +44,15 @@ class UserController extends Controller
         return response()->json(['message' => $response], $httpstatus);
     }
 
-    public function logout(Request $request){
-        $Token=$request->header('token');
-        $user=User::where("remember_token","$Token");
-        if($user->first()==null){
-            return response("token not found",400);
-        }else{
-            $user->update(["remember_token" => null,"token_expire_time" => null]);
-            return response("success",200);
+    public function logout(Request $request)
+    {
+        $Token = $request->header('token');
+        $user = User::where("remember_token", "$Token");
+        if ($user->first() == null) {
+            return response("token not found", 400);
+        } else {
+            $user->update(["remember_token" => null, "token_expire_time" => null]);
+            return response("success", 200);
         }
     }
 
@@ -82,35 +84,37 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request["lockerNo"] != null && $request['email'] != NULL && $request['name'] != NULL && $request['cardId'] != NULL && $request['phone'] != NULL) {
+        try {
+            $request->validate([
+                'lockerNo' => 'required|exists:lockers',
+                'email' => 'required|unique:users|email:rfc,dns|max:80',
+                'name' => 'required|unique:users|max:40',
+                'cardId' => 'required|unique:users|numeric|digits_between:0,20',
+                'phone' => 'required|unique:users|numeric|digits_between:0,20',
+            ]);
             $locker = Locker::where("lockerNo", "=", $request["lockerNo"]);
-            if ($locker->first() != null) {
-                if ($locker->first()->userId == null) {
-                    if (preg_match("/^09\d{8}$/", $request['phone'])) {
-                        $request['phone'] = "886" . ltrim($request['phone'], "0");
-                    }
-        
-                    if (!preg_match("/^[\w!\#$%&'*+\-\/=?^_`{|}~]+(\.[\w!#$%&'*+\-\/=?^_`{|}~]+)*@[\w\-]+(\.[\w\-]+)+$/", $request['email'])) {
-                        return response("emailerror", 400);
-                    } else {
-                        try {
-                            $newUser = new user();
-                            $newUser->email = $request["email"];
-                            $newUser->name = $request["name"];
-                            $newUser->password = Hash::make($request["password"]);
-                            $newUser->phone = $request["phone"];
-                            $newUser->cardId = $request['cardId'];
-                            $newUser->save();
+            if ($locker->first()->userId == null) {
+                if (preg_match("/^09\d{8}$/", $request['phone'])) {
+                    $request['phone'] = "886" . ltrim($request['phone'], "0");
+                }
+                try {
+                    $newUser = new user();
+                    $newUser->email = $request["email"];
+                    $newUser->name = $request["name"];
+                    $newUser->password = Hash::make($request["password"]);
+                    $newUser->phone = $request["phone"];
+                    $newUser->cardId = $request['cardId'];
+                    $newUser->save();
 
-                            $locker->update(["userId" => $newUser->id]);
-                            return response("success", 200);
-                        } catch (\Exception $e) {
-                            return response($e->getMessage(), 400);
-                        }
-                    }
-                } else return response("error", 400);
-            } else return response("lockNoerror", 400);
-        } else return response("dataerror", 400);
+                    $locker->update(["userId" => $newUser->id]);
+                    return response("success", 200);
+                } catch (\Exception $e) {
+                    return response($e->getMessage(), 400);
+                }
+            } else return response("error", 400);
+        } catch (\Exception $e) {
+            return response($e->getMessage(), 400);
+        }
     }
 
     /**
@@ -144,37 +148,48 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if ($id == NULL || $request['email'] == NULL || $request['name'] == NULL || $request['cardId'] == NULL || $request['phone'] == NULL) {
-            return response("error", 400);
+        if ($id == NULL) {
+            return response("id error", 400);
         } else {
-            if (preg_match("/^09\d{8}$/", $request['phone'])) {
-                $request['phone'] = "886" . ltrim($request['phone'], "0");
-            }
-
-            if (!preg_match("/^[\w!\#$%&'*+\-\/=?^_`{|}~]+(\.[\w!#$%&'*+\-\/=?^_`{|}~]+)*@[\w\-]+(\.[\w\-]+)+$/", $request['email'])) {
-                return response("email error", 400);
-            } elseif (strlen($request['name']) > 40) {
-                return response("name error", 400);
+            $user = User::where('id', '=', $id);
+            if ($user->first() == NULL) {
+                return response("id not found", 400);
             } else {
-                $user = User::where('id', '=', $id);
-                if ($user->first() == NULL) {
-                    return response("id error", 400);
-                } else {
-                    try {
-                        $user->update([
-                            'email' => $request['email'],
-                            'name' => $request['name'],
-                            'cardId' => $request['cardId'],
-                            'phone' => $request['phone']
-                        ]);
-                        return response($user->first(['id', 'name', 'email', 'phone', 'cardId']), 200);
-                    } catch (\Exception $e) {
-                        return response($e->getMessage(), 400);
-                    }
+                $email = [];
+                $name = [];
+                $cardId = [];
+                $phone = [];
+                $otheruser = User::where("id", "!=", $id)->get();
+                foreach ($otheruser as $v) {
+                    array_push($email, $v->email);
+                    array_push($name, $v->name);
+                    array_push($cardId, $v->cardId);
+                    array_push($phone, $v->phone);
+                }
+                if (preg_match("/^09\d{8}$/", $request['phone'])) {
+                    $request['phone'] = "886" . ltrim($request['phone'], "0");
+                }
+                try {
+                    $request->validate([
+                        'email' => ['required', 'email:rfc,dns', 'max:80', Rule::notIn($email)],
+                        'name' => ['required', 'max:40', Rule::notIn($name)],
+                        'cardId' => ['required', 'numeric', 'digits_between:0,20', Rule::notIn($cardId)],
+                        'phone' => ['required', 'numeric', 'digits_between:0,20', Rule::notIn($phone)],
+                    ]);
+                    $user->update([
+                        'email' => $request['email'],
+                        'name' => $request['name'],
+                        'cardId' => $request['cardId'],
+                        'phone' => $request['phone']
+                    ]);
+                    return response($user->first(['id', 'name', 'email', 'phone', 'cardId']), 200);
+                } catch (\Exception $e) {
+                    return response($e->getMessage(), 400);
                 }
             }
         }
     }
+
 
     /**
      * Remove the specified resource from storage.
