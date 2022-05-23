@@ -43,6 +43,17 @@ class UserController extends Controller
         return response()->json(['message' => $response], $httpstatus);
     }
 
+    public function logout(Request $request){
+        $Token=$request->header('token');
+        $user=User::where("remember_token","$Token");
+        if($user->first()==null){
+            return response("token not found",400);
+        }else{
+            $user->update(["remember_token" => null,"token_expire_time" => null]);
+            return response("success",200);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
