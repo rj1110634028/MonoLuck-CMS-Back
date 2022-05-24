@@ -22,6 +22,6 @@ class locker extends Model
 
     public function record()
     {
-        return $this->hasMany(record::class, 'id', 'lockerId');
+        return $this->hasMany(record::class, 'lockerId', 'id');
     }
 }

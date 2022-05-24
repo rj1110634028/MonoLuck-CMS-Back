@@ -22,13 +22,14 @@ class LockerController extends Controller
             $token = $request->header('token');
             $rootuser = User::where('remember_token', '=', $token)->first();
 
+            MQTT::publish('locker/unlock', $locker->first()->lockerEncoding);
+
             $record = new Record;
             $record->description = $request['description'];
             $record->userId = $rootuser->id;
             $record->lockerId = $locker->first()->id;
             $record->save();
 
-            MQTT::publish('locker/unlock', $locker->first()->lockerEncoding);
             $locker->update(['lockUp' => 0]);
             return response("success", 200);
         } catch (\Exception $e) {

@@ -58,11 +58,10 @@ class RecordController extends Controller
                 return response("lockerNo error" . $lockerNo, 400);
             } else {
                 $records = Record::select([
-                    'name' => User::select('name')->whereColumn('userId', 'users.id'),
-                    'permission' => User::select('permission')->whereColumn('userId', 'users.id'),
                     'created_at AS time',
-                    'description'
-                ])->where("lockerId", "=", $locker->id)->orderByDesc('created_at')->get();
+                    'description',
+                    'userId'
+                ])->with('user:id,name,permission')->where("lockerId", "=", $locker->id)->orderByDesc('created_at')->get();
                 $user = User::where("id", "=", $locker->userId)->first(['id', 'name', 'email', 'phone', 'cardId']);
                 if ($user == null) {
                     return response("didn't have user", 400);
