@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use phpDocumentor\Reflection\Types\Null_;
 
 class UserController extends Controller
 {
@@ -146,45 +147,49 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $lockerNo)
     {
-        if ($id == NULL) {
-            return response("id error", 400);
+        if ($lockerNo == NULL) {
+            return response("lockerNo error", 400);
         } else {
-            $user = User::where('id', '=', $id);
-            if ($user->first() == NULL) {
-                return response("id not found", 400);
-            } else {
-                $email = [];
-                $name = [];
-                $cardId = [];
-                $phone = [];
-                $otheruser = User::where("id", "!=", $id)->get();
-                foreach ($otheruser as $v) {
-                    array_push($email, $v->email);
-                    array_push($name, $v->name);
-                    array_push($cardId, $v->cardId);
-                    array_push($phone, $v->phone);
-                }
-                if (preg_match("/^09\d{8}$/", $request['phone'])) {
-                    $request['phone'] = "886" . ltrim($request['phone'], "0");
-                }
-                try {
-                    $request->validate([
-                        'email' => ['required', 'email:rfc,dns', 'max:80', Rule::notIn($email)],
-                        'name' => ['required', 'max:40', Rule::notIn($name)],
-                        'cardId' => ['required', 'numeric', 'digits_between:0,20', Rule::notIn($cardId)],
-                        'phone' => ['required', 'numeric', 'digits_between:0,20', Rule::notIn($phone)],
-                    ]);
-                    $user->update([
-                        'email' => $request['email'],
-                        'name' => $request['name'],
-                        'cardId' => $request['cardId'],
-                        'phone' => $request['phone']
-                    ]);
-                    return response($user->first(['id', 'name', 'email', 'phone', 'cardId']), 200);
-                } catch (\Exception $e) {
-                    return response($e->getMessage(), 400);
+            $locker = Locker::where('lockerNo', '=', $lockerNo)->first();
+            if ($locker == NULL) {
+                return response("lockerNo not found", 400);
+                $user = User::where('id', '=', $locker->userId);
+                if ($user->first() != NULL) {
+                    return response("user not found", 400);
+                } else {
+                    $email = [];
+                    $name = [];
+                    $cardId = [];
+                    $phone = [];
+                    $otheruser = User::where("id", "!=", $lockerNo)->get();
+                    foreach ($otheruser as $v) {
+                        array_push($email, $v->email);
+                        array_push($name, $v->name);
+                        array_push($cardId, $v->cardId);
+                        array_push($phone, $v->phone);
+                    }
+                    if (preg_match("/^09\d{8}$/", $request['phone'])) {
+                        $request['phone'] = "886" . ltrim($request['phone'], "0");
+                    }
+                    try {
+                        $request->validate([
+                            'email' => ['required', 'email:rfc,dns', 'max:80', Rule::notIn($email)],
+                            'name' => ['required', 'max:40', Rule::notIn($name)],
+                            'cardId' => ['required', 'numeric', 'digits_between:0,20', Rule::notIn($cardId)],
+                            'phone' => ['required', 'numeric', 'digits_between:0,20', Rule::notIn($phone)],
+                        ]);
+                        $user->update([
+                            'email' => $request['email'],
+                            'name' => $request['name'],
+                            'cardId' => $request['cardId'],
+                            'phone' => $request['phone']
+                        ]);
+                        return response($user->first(['id', 'name', 'email', 'phone', 'cardId']), 200);
+                    } catch (\Exception $e) {
+                        return response($e->getMessage(), 400);
+                    }
                 }
             }
         }
