@@ -21,12 +21,12 @@ class record extends Model
         'userId',
     ];
 
-    public function user()
+    public function User()
     {
         return $this->belongsTo(user::class, 'userId', 'id');
     }
 
-    public function locker()
+    public function Locker()
     {
         return $this->belongsTo(locker::class, 'lockerId', 'id');
     }

@@ -43,12 +43,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function locker()
+    public function Locker()
     {
         return $this->hasOne(locker::class, 'lockerId', 'id');
     }
 
-    public function record()
+    public function Record()
     {
         return $this->hasMany(record::class, 'userId', 'id');
     }

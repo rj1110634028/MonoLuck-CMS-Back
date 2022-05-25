@@ -15,12 +15,12 @@ class locker extends Model
         'userId',
     ];
 
-    public function user()
+    public function User()
     {
         return $this->belongsTo(user::class, 'userId', 'id');
     }
 
-    public function record()
+    public function Record()
     {
         return $this->hasMany(record::class, 'lockerId', 'id');
     }
