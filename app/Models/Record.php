@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class record extends Model
+class Record extends Model
 {
     use HasFactory;
 
@@ -23,11 +23,11 @@ class record extends Model
 
     public function User()
     {
-        return $this->belongsTo(user::class, 'userId', 'id');
+        return $this->belongsTo(User::class, 'userId', 'id');
     }
 
     public function Locker()
     {
-        return $this->belongsTo(locker::class, 'lockerId', 'id');
+        return $this->belongsTo(Locker::class, 'lockerId', 'id');
     }
 }
