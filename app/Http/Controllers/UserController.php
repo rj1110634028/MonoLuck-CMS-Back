@@ -171,7 +171,7 @@ class UserController extends Controller
                 }
                 try {
                     $request->validate([
-                        'email' => ['required', 'email:rfc,dns', 'max:80', Rule::notIn($email)],
+                        'email' => ['required', 'email:rfc', 'max:80', Rule::notIn($email)],
                         'name' => ['required', 'max:40', Rule::notIn($name)],
                         'cardId' => ['required', 'numeric', 'digits_between:0,20', Rule::notIn($cardId)],
                         'phone' => ['required', 'numeric', 'digits_between:0,20', Rule::notIn($phone)],
