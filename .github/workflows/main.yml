@@ -1,0 +1,16 @@
+name: My Actions
+on: push
+jobs:
+  build:
+    name: Build and deploy to web server
+    runs-on: self-hosted
+    environment: Staging
+    steps:
+      - uses: actions/checkout@v3
+      - run: php --version
+      - run: composer --version
+      - run: composer install
+      - run: composer update
+      - run: echo "${{ secrets.LARAVEL_ENV }}" >> ./.env
+      - run: cat ./.env
+      - run: tar -zcvf - ./ |ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "tar -zxvf - -C ${{ secrets.DEPLOY_PATH }}"
