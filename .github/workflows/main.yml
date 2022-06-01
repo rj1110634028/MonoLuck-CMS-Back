@@ -15,7 +15,7 @@ jobs:
       - run: php artisan config:cache
       - run: php artisan test
       - run: cat ./.env
-      - run: rm ./vendor
+      - run: rm -rf ./vendor
       - run: rsync -avz -e 'ssh' ./ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}
       - uses: garygrossgarten/github-action-ssh@release
         with:
