@@ -21,10 +21,8 @@ jobs:
         with:
           command: |
             cd ${{ secrets.DEPLOY_PATH }}
-            find ./ -name vendor | xargs rm -rf
             composer install
             composer update
-            php artisan test
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           password: ${{ secrets.DEPLOY_PASSWORD }}
