@@ -24,6 +24,7 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH }}
             composer install
             composer update
+            php artisan test
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           password: ${{ secrets.DEPLOY_PASSWORD }}
