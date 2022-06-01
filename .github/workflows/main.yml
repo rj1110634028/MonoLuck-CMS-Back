@@ -11,7 +11,8 @@ jobs:
       - run: composer --version
       - run: composer install
       - run: composer update
-      - run: vendor/bin/phpunit tests/
       - run: echo "${{ secrets.LARAVEL_ENV }}" >> ./.env
+      - run: php artisan config:cache
+      - run: php artisan test
       - run: cat ./.env
       - run: rsync -avz -e 'ssh' build/ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}
