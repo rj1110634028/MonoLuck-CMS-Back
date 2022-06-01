@@ -9,10 +9,10 @@ jobs:
       - uses: actions/checkout@v3
       - run: php --version
       - run: composer --version
-      - run: ls -a
       - run: composer install
       - run: composer update
       - run: echo "${{ secrets.LARAVEL_ENV }}" >> ./.env
+      - run: ls -a
       - run: php artisan config:cache
       - run: php artisan test
       - run: cat ./.env
