@@ -1,7 +1,7 @@
 name: My Actions
 on: push
 jobs:
-  test:
+  build:
     name: Build and deploy to web server
     runs-on: self-hosted
     environment: Staging
@@ -15,18 +15,16 @@ jobs:
       - run: php artisan config:cache
       - run: php artisan test
       - run: cat ./.env
-      - run: rm /node_modules
-      - run: rm /vendor
+      - run: rm ./node_modules
+      - run: rm ./vendor
       - run: rsync -avz -e 'ssh' ./ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}
-  build:
-    name: Remote SSH Commands
-    runs-on: self-hosted
-    steps:
-    - uses: fifsky/ssh-action@v0.0.6
-      with:
-        command: |
-          cd /home/depoly/lock-cms-back
-          composer install
-          composer update
-        host: ${{ secrets.DEPLOY_HOST }}
-        user: ${{ secrets.DEPLOY_USER }}
+      - uses: garygrossgarten/github-action-ssh@release
+        with:
+          command:
+            ls -a
+            cd ${{ secrets.DEPLOY_PATH }}
+            composer install
+            composer update
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
