@@ -18,11 +18,12 @@ jobs:
       - run: rm /node_modules
       - run: rm /vendor
       - run: rsync -avz -e 'ssh' ./ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}
-      - uses: fifsky/ssh-action@master
+      - name: Remote SSH Commands
+        uses: fifsky/ssh-action@v0.0.6
         with:
           command: |
             cd /home/depoly/lock-cms-back
             composer install
             composer update
           host: ${{ secrets.DEPLOY_HOST }}
-          user: root
+          user: ${{ secrets.DEPLOY_USER }}
