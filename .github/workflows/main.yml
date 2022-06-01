@@ -20,8 +20,8 @@ jobs:
       - uses: garygrossgarten/github-action-ssh@release
         with:
           command: |
-            ls -a
             cd ${{ secrets.DEPLOY_PATH }}
+            find ./ -name vendor | xargs rm -rf
             composer install
             composer update
             php artisan test
