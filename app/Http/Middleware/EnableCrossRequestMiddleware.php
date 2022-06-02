@@ -18,6 +18,7 @@ class EnableCrossRequestMiddleware
         $allow_origin = [
             'http://localhost',
             'http://0.0.0.0',
+            'http://stage1.monosparta.org',
         ];
         if (in_array($origin, $allow_origin)) {
             $response->header('Access-Control-Allow-Origin', $origin);
