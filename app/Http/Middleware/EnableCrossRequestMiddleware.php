@@ -20,6 +20,7 @@ class EnableCrossRequestMiddleware
             'http://0.0.0.0',
             'http://stage1.monosparta.org',
         ];
+        echo $origin;
         if (in_array($origin, $allow_origin)) {
             $response->header('Access-Control-Allow-Origin', $origin);
             $response->header('Access-Control-Allow-Headers', 'Origin, Content-Type, Cookie, X-CSRF-TOKEN, Accept, Authorization, X-XSRF-TOKEN');
