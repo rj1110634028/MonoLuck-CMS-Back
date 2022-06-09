@@ -171,10 +171,10 @@ class UserController extends Controller
                 }
                 try {
                     $request->validate([
-                        'email' => ['required', 'email:rfc', 'max:80', Rule::notIn($email)],
-                        'name' => ['required', 'max:40', Rule::notIn($name)],
-                        'cardId' => ['required', 'numeric', 'digits_between:0,20', Rule::notIn($cardId)],
-                        'phone' => ['required', 'numeric', 'digits_between:0,20', Rule::notIn($phone)],
+                        'email' => ['required', 'email:rfc', 'max:80', Rule::unique('users')->ignore($id)],
+                        'name' => ['required', 'max:40', Rule::unique('users')->ignore($id)],
+                        'cardId' => ['required', 'numeric', 'digits_between:0,20', Rule::unique('users')->ignore($id)],
+                        'phone' => ['required', 'numeric', 'digits_between:0,20', Rule::unique('users')->ignore($id)],
                     ]);
                     $user->update([
                         'email' => $request['email'],
