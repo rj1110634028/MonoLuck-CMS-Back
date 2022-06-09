@@ -7,16 +7,28 @@ use App\Models\User;
 use App\Models\Record;
 use Illuminate\Http\Request;
 use PhpMqtt\Client\Facades\MQTT;
+use Illuminate\Support\Facades\Validator;
 
 class LockerController extends Controller
 {
     public function unlock(Request $request)
     {
-        try {
-            $request->validate([
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'lockerNo' => 'required|exists:lockers',
                 'description' => 'required',
-            ]);
+            ],
+            [],
+            [
+                'lockerNo' => '置物櫃編號',
+                'description' => '開鎖原因',
+            ]
+        );
+        if ($validator->fails()) {
+            return  response($validator->errors(), 400);
+        }
+        try {
             $locker = Locker::where('lockerNo', '=', $request['lockerNo']);
 
             $token = $request->header('token');
@@ -33,16 +45,25 @@ class LockerController extends Controller
             $locker->update(['lockUp' => 0]);
             return response("success", 200);
         } catch (\Exception $e) {
-            return response($e->getMessage(), 400);
+            return response($e->getMessage(), 422);
         }
     }
 
     public function RPIunlock(Request $request)
     {
-        try {
-            $request->validate([
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'cardId' => 'required|exists:users',
-            ]);
+            ][],
+            [
+                'cardId' => '卡號',
+            ]
+        );
+        if ($validator->fails()) {
+            return  response($validator->errors(), 400);
+        }
+        try {
             $user = User::where('cardId', '=', $request['cardId'])->first();
             $locker = Locker::where('userId', '=', $user->id)->first();
             if ($locker != NULL) {
@@ -55,7 +76,7 @@ class LockerController extends Controller
                 return response($locker->lockerEncoding, 200);
             } else return response("lockererror", 400);
         } catch (\Exception $e) {
-            return response($e->getMessage(), 400);
+            return response($e->getMessage(), 422);
         }
     }
 

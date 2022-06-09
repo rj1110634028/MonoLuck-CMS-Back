@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -85,37 +86,47 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $request->validate([
+        if (preg_match("/^09\d{8}$/", $request['phone'])) {
+            $request['phone'] = "886" . ltrim($request['phone'], "0");
+        }
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'lockerNo' => 'required|exists:lockers',
                 'mail' => 'required|unique:users|email:rfc,dns|max:80',
                 'name' => 'required|unique:users|max:40',
-                'cardId' => 'required|unique:users|numeric|digits_between:0,20',
-                'phone' => 'required|unique:users|numeric|digits_between:0,20',
-            ]);
-            $locker = Locker::where("lockerNo", "=", $request["lockerNo"]);
-            if ($locker->first()->userId == null) {
-                if (preg_match("/^09\d{8}$/", $request['phone'])) {
-                    $request['phone'] = "886" . ltrim($request['phone'], "0");
-                }
-                try {
-                    $newUser = new user();
-                    $newUser->mail = $request["mail"];
-                    $newUser->name = $request["name"];
-                    $newUser->password = Hash::make($request["password"]);
-                    $newUser->phone = $request["phone"];
-                    $newUser->cardId = $request['cardId'];
-                    $newUser->save();
-
-                    $locker->update(["userId" => $newUser->id]);
-                    return response("success", 200);
-                } catch (\Exception $e) {
-                    return response($e->getMessage(), 400);
-                }
-            } else return response("error", 400);
-        } catch (\Exception $e) {
-            return response($e->getMessage(), 400);
+                'cardId' => 'required|unique:users|digits_between:0,20',
+                'phone' => 'required|unique:users|digits_between:0,20',
+            ],
+            [],
+            [
+                'lockerNo' => '置物櫃編號',
+                'mail' => '電子信箱',
+                'name' => '姓名',
+                'cardId' => '卡號',
+                'phone' => '電話',
+            ]
+        );
+        if ($validator->fails()) {
+            return  response($validator->errors(), 400);
         }
+        $locker = Locker::where("lockerNo", "=", $request["lockerNo"]);
+        if ($locker->first()->userId == null) {
+            try {
+                $newUser = new user();
+                $newUser->mail = $request["mail"];
+                $newUser->name = $request["name"];
+                $newUser->password = Hash::make($request["password"]);
+                $newUser->phone = $request["phone"];
+                $newUser->cardId = $request['cardId'];
+                $newUser->save();
+
+                $locker->update(["userId" => $newUser->id]);
+                return response("success", 200);
+            } catch (\Exception $e) {
+                return response($e->getMessage(), 400);
+            }
+        } else return response("此置物櫃已被使用", 400);
     }
 
     /**
@@ -149,34 +160,36 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if ($id == NULL) {
-            return response("id error", 400);
-        } else {
-            $user = User::where('id', '=', $id);
-            if ($user->first() == NULL) {
-                return response("id not found", 400);
+        if (preg_match("/^09\d{8}$/", $request['phone'])) {
+            $request['phone'] = "886" . ltrim($request['phone'], "0");
+        }
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'mail' => ['required', 'email:rfc', 'max:80', Rule::unique('users')->ignore($id)],
+                'name' => ['required', 'max:40', Rule::unique('users')->ignore($id)],
+                'cardId' => ['required', 'numeric', 'digits_between:6,20', Rule::unique('users')->ignore($id)],
+                'phone' => ['required', 'numeric', 'digits_between:1,20', Rule::unique('users')->ignore($id)],
+            ],
+            [],
+            [
+                'mail' => '電子信箱',
+                'name' => '姓名',
+                'cardId' => '卡號',
+                'phone' => '電話',
+            ]
+        );
+        if ($validator->fails()) {
+            return  response($validator->errors(), 400);
+        }
+        try {
+            if ($id == NULL) {
+                return response("id error", 400);
             } else {
-                $mail = [];
-                $name = [];
-                $cardId = [];
-                $phone = [];
-                $otheruser = User::where("id", "!=", $id)->get();
-                foreach ($otheruser as $v) {
-                    array_push($mail, $v->mail);
-                    array_push($name, $v->name);
-                    array_push($cardId, $v->cardId);
-                    array_push($phone, $v->phone);
-                }
-                if (preg_match("/^09\d{8}$/", $request['phone'])) {
-                    $request['phone'] = "886" . ltrim($request['phone'], "0");
-                }
-                try {
-                    $request->validate([
-                        'mail' => ['required', 'email:rfc', 'max:80', Rule::unique('users')->ignore($id)],
-                        'name' => ['required', 'max:40', Rule::unique('users')->ignore($id)],
-                        'cardId' => ['required', 'numeric', 'digits_between:0,20', Rule::unique('users')->ignore($id)],
-                        'phone' => ['required', 'numeric', 'digits_between:0,20', Rule::unique('users')->ignore($id)],
-                    ]);
+                $user = User::where('id', '=', $id);
+                if ($user->first() == NULL) {
+                    return response("id not found", 400);
+                } else {
                     $user->update([
                         'mail' => $request['mail'],
                         'name' => $request['name'],
@@ -184,10 +197,10 @@ class UserController extends Controller
                         'phone' => $request['phone']
                     ]);
                     return response($user->first(['id', 'name', 'mail', 'phone', 'cardId']), 200);
-                } catch (\Exception $e) {
-                    return response($e->getMessage(), 400);
                 }
             }
+        } catch (\Exception $e) {
+            return response($e->getMessage(), 400);
         }
     }
 
