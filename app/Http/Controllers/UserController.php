@@ -31,6 +31,7 @@ class UserController extends Controller
             $user->token_expire_time = date('Y-m-d H:i:s', time() + 60 * 60);
             $user->save();
             $response = array(
+                "name" => $user->name,
                 "permission" => $user->permission,
                 "token" => $user->remember_token,
                 "expire_time" => $user->token_expire_time
