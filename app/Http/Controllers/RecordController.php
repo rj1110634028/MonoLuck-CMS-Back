@@ -62,7 +62,7 @@ class RecordController extends Controller
                     'description',
                     'userId'
                 ])->with('user:id,name,permission')->where("lockerId", "=", $locker->id)->orderByDesc('created_at')->get();
-                $user = User::where("id", "=", $locker->userId)->first(['id', 'name', 'email', 'phone', 'cardId']);
+                $user = User::where("id", "=", $locker->userId)->first(['id', 'name', 'mail', 'phone', 'cardId']);
                 if ($user == null) {
                     return response("didn't have user", 400);
                 } else {

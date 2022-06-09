@@ -29,19 +29,19 @@ class UserSeeder extends Seeder
         //create test RootUser
         User::create([
             'permission' => 0,
-            'email' => '000@example.com',
+            'mail' => '000@example.com',
             'name' => 'root',
             'password' => Hash::make('root'),
         ]);
         User::create([
             'permission' => 0,
-            'email' => '002@example.com',
+            'mail' => '002@example.com',
             'name' => 'root2',
             'password' => Hash::make('root'),
         ]);
         User::create([
             'permission' => 0,
-            'email' => '003@example.com',
+            'mail' => '003@example.com',
             'name' => 'root3',
             'password' => Hash::make('root'),
         ]);

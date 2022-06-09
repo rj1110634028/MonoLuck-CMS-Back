@@ -15,7 +15,7 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('mail', 'password');
 
         //先確認user資訊是否正確
         if (Auth::attempt($credentials)) {
@@ -26,7 +26,7 @@ class UserController extends Controller
                     ->first();
             } while ($checkTokenExist);
             //建立token並寫入使用時間
-            $user = User::where('email', '=', $request["email"])->first();
+            $user = User::where('mail', '=', $request["mail"])->first();
             $user->remember_token =  $loginToken;
             $user->token_expire_time = date('Y-m-d H:i:s', time() + 60 * 60);
             $user->save();
@@ -88,7 +88,7 @@ class UserController extends Controller
         try {
             $request->validate([
                 'lockerNo' => 'required|exists:lockers',
-                'email' => 'required|unique:users|email:rfc,dns|max:80',
+                'mail' => 'required|unique:users|email:rfc,dns|max:80',
                 'name' => 'required|unique:users|max:40',
                 'cardId' => 'required|unique:users|numeric|digits_between:0,20',
                 'phone' => 'required|unique:users|numeric|digits_between:0,20',
@@ -100,7 +100,7 @@ class UserController extends Controller
                 }
                 try {
                     $newUser = new user();
-                    $newUser->email = $request["email"];
+                    $newUser->mail = $request["mail"];
                     $newUser->name = $request["name"];
                     $newUser->password = Hash::make($request["password"]);
                     $newUser->phone = $request["phone"];
@@ -156,13 +156,13 @@ class UserController extends Controller
             if ($user->first() == NULL) {
                 return response("id not found", 400);
             } else {
-                $email = [];
+                $mail = [];
                 $name = [];
                 $cardId = [];
                 $phone = [];
                 $otheruser = User::where("id", "!=", $id)->get();
                 foreach ($otheruser as $v) {
-                    array_push($email, $v->email);
+                    array_push($mail, $v->mail);
                     array_push($name, $v->name);
                     array_push($cardId, $v->cardId);
                     array_push($phone, $v->phone);
@@ -172,18 +172,18 @@ class UserController extends Controller
                 }
                 try {
                     $request->validate([
-                        'email' => ['required', 'email:rfc', 'max:80', Rule::unique('users')->ignore($id)],
+                        'mail' => ['required', 'email:rfc', 'max:80', Rule::unique('users')->ignore($id)],
                         'name' => ['required', 'max:40', Rule::unique('users')->ignore($id)],
                         'cardId' => ['required', 'numeric', 'digits_between:0,20', Rule::unique('users')->ignore($id)],
                         'phone' => ['required', 'numeric', 'digits_between:0,20', Rule::unique('users')->ignore($id)],
                     ]);
                     $user->update([
-                        'email' => $request['email'],
+                        'mail' => $request['mail'],
                         'name' => $request['name'],
                         'cardId' => $request['cardId'],
                         'phone' => $request['phone']
                     ]);
-                    return response($user->first(['id', 'name', 'email', 'phone', 'cardId']), 200);
+                    return response($user->first(['id', 'name', 'mail', 'phone', 'cardId']), 200);
                 } catch (\Exception $e) {
                     return response($e->getMessage(), 400);
                 }

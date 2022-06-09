@@ -22,7 +22,7 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'phone' => $this->faker->unique()->regexify('8869\d{8}'),
-            'email' => $this->faker->unique()->safeEmail(),
+            'mail' => $this->faker->unique()->safeEmail(),
             'cardId' => $this->faker->unique()->regexify('\d{16}'),
             'password' => Hash::make("0000"), // password
         ];

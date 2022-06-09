@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('password',80);
             $table->string('cardId',20)->unique()->nullable();
             $table->string('phone',20)->unique()->nullable();
-            $table->string('email',80)->unique();
+            $table->string('mail',80)->unique();
             $table->dateTime('token_expire_time')->nullable();
             $table->rememberToken();
             $table->timestamps();
