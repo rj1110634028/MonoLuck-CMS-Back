@@ -186,7 +186,7 @@ class UserController extends Controller
             if ($id == NULL) {
                 return response("id error", 400);
             } else {
-                $user = User::where('id', '=', $id);
+                $user = User::fine($id);
                 if ($user->first() == NULL) {
                     return response("id not found", 400);
                 } else {
@@ -211,8 +211,22 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(User $user, $id)
     {
-        //
+        try {
+            if ($id == NULL) {
+                return response("id error", 400);
+            } else {
+                $user = User::find($id);
+                if ($user->first() == NULL) {
+                    return response("id not found", 400);
+                } else {
+                    $user->delete();
+                    return response("success", 200);
+                }
+            }
+        } catch (\Exception $e) {
+            return response($e->getMessage(), 400);
+        }
     }
 }

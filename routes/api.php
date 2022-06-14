@@ -29,8 +29,9 @@ Route::middleware([EnableCrossRequestMiddleware::class])->group(function () {
     Route::get('logout',[UserController::class,'logout']);
 
     Route::middleware([EnsurePermissionIsRoot::class])->group(function () {
-        Route::patch('user/{lockerNo}',[UserController::class,'update']);
+        Route::patch('user/{id}',[UserController::class,'update']);
         Route::post('user',[UserController::class,'store']);
+        Route::delete('user/{id}',[UserController::class,'destroy']);
 
         Route::get('locker',[LockerController::class,'index']);
         Route::post('unlock',[LockerController::class,'unlock']);
