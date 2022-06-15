@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedInteger('userId')->nullable();
             $table->boolean('error')->default(false);
             $table->timestamps();
-            $table->foreign('userId')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('userId')->references('id')->on('users');
         });
     }
 
