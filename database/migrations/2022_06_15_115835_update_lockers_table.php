@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('lockers', function (Blueprint $table) {
-            $table->foreignId('userId')->change()->constrained('users')->nullOnDelete();
+            $table->foreign('userId')->change()->constrained('users')->nullOnDelete();
         });
     }
 
