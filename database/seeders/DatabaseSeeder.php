@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use \App\Models\user;
-use \App\Models\locker;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,8 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             LockerSeeder::class,
-            UserSeeder::class,
-            RecordSeeder::class,
+            RootUserSeeder::class,
         ]);
     }
 }
