@@ -55,7 +55,7 @@ class LockerController extends Controller
             $request->all(),
             [
                 'cardId' => 'required|exists:users',
-            ][],
+            ],[],
             [
                 'cardId' => '卡號',
             ]
