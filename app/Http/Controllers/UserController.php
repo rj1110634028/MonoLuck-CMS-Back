@@ -219,7 +219,7 @@ class UserController extends Controller
             if ($id == NULL) {
                 return response("id error", 400);
             } else {
-                $user = User::fine($id);
+                $user = User::find($id);
                 if ($user->first() == NULL) {
                     return response("id not found", 400);
                 } else {
