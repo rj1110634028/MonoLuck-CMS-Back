@@ -13,6 +13,39 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    public function newAdmin(Request $request){
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'mail' => 'required|unique:users|email:rfc|max:80',
+                // 'name' => 'required|unique:users|max:40',
+                // 'password' => 'required',
+                // 'confirm' => 'required'
+            ],
+            [],
+            [
+                'mail' => '電子信箱',
+                // 'name' => '姓名',
+                // 'password' => '密碼',
+                // 'confirm' => '確認密碼'
+            ]
+        );
+        if ($validator->fails()) {
+            return  response($validator->errors(), 400);
+        // }elseif($request->password != $request->confirm){
+        //     return  response("密碼與確認密碼不一致 ", 400);
+        }else {
+            try {
+                $newUser = new user();
+                $newUser->mail = $request["mail"];
+                $newUser->permission = 0;
+                $newUser->save();
+                return response("新增成功", 200);
+            } catch (\Exception $e) {
+                return response($e->getMessage(), 200);
+            }
+        }
+    }
 
     public function login(Request $request)
     {
@@ -49,7 +82,7 @@ class UserController extends Controller
     public function logout(Request $request)
     {
         $Token = $request->header('token');
-        $user = User::where("remember_token", "$Token");
+        $user = User::where("remember_token", $Token);
         if ($user->first() == null) {
             return response("token not found", 400);
         } else {
@@ -93,7 +126,7 @@ class UserController extends Controller
             $request->all(),
             [
                 'lockerNo' => 'required|exists:lockers',
-                'mail' => 'required|unique:users|email:rfc,dns|max:80',
+                'mail' => 'required|unique:users|email:rfc|max:80',
                 'name' => 'required|unique:users|max:40',
                 'cardId' => 'required|unique:users|digits_between:0,20',
                 'phone' => 'required|unique:users|digits_between:0,20',

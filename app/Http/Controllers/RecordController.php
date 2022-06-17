@@ -55,7 +55,7 @@ class RecordController extends Controller
         } else {
             $locker = Locker::where("lockerNo", "=", $lockerNo)->first();
             if ($locker == null) {
-                return response("lockerNo error" . $lockerNo, 400);
+                return response("lockerNo error " . $lockerNo, 400);
             } else {
                 $records = Record::select([
                     'created_at AS time',
