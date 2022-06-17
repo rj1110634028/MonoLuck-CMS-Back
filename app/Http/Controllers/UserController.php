@@ -13,6 +13,31 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    public function newAdmin(Request $request){
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'mail' => 'required|unique:users|email:rfc|max:80',
+                'name' => 'required|unique:users|max:40',
+                'password' => 'required',
+                'confirm' => 'required'
+            ],
+            [],
+            [
+                'mail' => '電子信箱',
+                'name' => '姓名',
+                'password' => '密碼',
+                'confirm' => '確認密碼'
+            ]
+        );
+        if ($validator->fails()) {
+            return  response($validator->errors(), 400);
+        }elseif($request->password != $request->confirm){
+            return  response("密碼與確認密碼不一致 ", 400);
+        }else {
+            
+        }
+    }
 
     public function login(Request $request)
     {
@@ -93,7 +118,7 @@ class UserController extends Controller
             $request->all(),
             [
                 'lockerNo' => 'required|exists:lockers',
-                'mail' => 'required|unique:users|email:rfc,dns|max:80',
+                'mail' => 'required|unique:users|email:rfc|max:80',
                 'name' => 'required|unique:users|max:40',
                 'cardId' => 'required|unique:users|digits_between:0,20',
                 'phone' => 'required|unique:users|digits_between:0,20',

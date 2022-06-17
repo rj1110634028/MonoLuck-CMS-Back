@@ -25,19 +25,20 @@ use App\Http\Middleware\EnableCrossRequestMiddleware;
 // });
 
 Route::middleware([EnableCrossRequestMiddleware::class])->group(function () {
-    Route::post('login',[UserController::class,'login']);
-    Route::get('logout',[UserController::class,'logout']);
+    Route::post('login', [UserController::class, 'login']);
+    Route::get('logout', [UserController::class, 'logout']);
 
     Route::middleware([EnsurePermissionIsRoot::class])->group(function () {
-        Route::patch('user/{id}',[UserController::class,'update']);
-        Route::post('user',[UserController::class,'store']);
-        Route::delete('user/{id}',[UserController::class,'destroy']);
+        Route::post('newAdmin', [UserController::class, 'newAdmin']);
 
-        Route::get('locker',[LockerController::class,'index']);
-        Route::post('unlock',[LockerController::class,'unlock']);
+        Route::patch('user/{id}', [UserController::class, 'update']);
+        Route::post('user', [UserController::class, 'store']);
+        Route::delete('user/{id}', [UserController::class, 'destroy']);
 
-        Route::get('record/{lockerNo}',[RecordController::class,'show']);
+        Route::get('locker', [LockerController::class, 'index']);
+        Route::post('unlock', [LockerController::class, 'unlock']);
+
+        Route::get('record/{lockerNo}', [RecordController::class, 'show']);
     });
+    Route::post('RPIunlock', [LockerController::class, 'RPIunlock'])->middleware(UnlockMiddleware::class);
 });
-Route::post('RPIunlock',[LockerController::class,'RPIunlock'])->middleware(UnlockMiddleware::class);
-
