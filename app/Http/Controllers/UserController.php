@@ -155,7 +155,7 @@ class UserController extends Controller
                 $newUser->save();
 
                 $locker->update(["userId" => $newUser->id]);
-                return response("success", 200);
+                return response()->json(['id' => $newUser->id], 200);
             } catch (\Exception $e) {
                 return response($e->getMessage(), 400);
             }
