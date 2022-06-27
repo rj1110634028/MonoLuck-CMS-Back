@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Locker;
+use App\Models\Record;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
@@ -254,6 +255,8 @@ class UserController extends Controller
                 if ($user == NULL) {
                     return response("id not found", 400);
                 } else {
+                    Locker::where('userId', $id)->update(['userId'=>NULL]);
+                    Record::where('userId', $id)->update(['userId'=>NULL]);
                     $user->delete();
                     return response("success", 200);
                 }
