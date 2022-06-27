@@ -8,7 +8,7 @@ use \App\Models\User;
 use \App\Models\Locker;
 use Illuminate\Support\Facades\Hash;
 
-class UserSeeder extends Seeder
+class RootUserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
