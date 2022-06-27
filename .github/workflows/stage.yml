@@ -16,9 +16,14 @@ jobs:
       - run: composer --version
       - run: composer install
       - run: composer update
+      - run: echo "${{ secrets.LARAVEL_ENV_TEST }}" >> ./.env.testing
+      - run: php artisan migrate:refresh
+      - run: php artisan migrate
+      - run: php artisan db:seed
+      - run: php artisan config:cache
+      - run: php artisan test --env=testing
       - run: echo "${{ secrets.LARAVEL_ENV }}" >> ./.env
       - run: php artisan config:cache
-      - run: php artisan test
       - run: cat ./.env
       - run: rm -rf ./vendor
       - run: rsync -avz -e 'ssh' ./ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}
