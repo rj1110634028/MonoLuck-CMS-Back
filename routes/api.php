@@ -32,7 +32,7 @@ Route::middleware([EnableCrossRequestMiddleware::class])->group(function () {
         Route::post('admin', [UserController::class, 'addAdmin']);
         Route::get('admin', [UserController::class, 'showAdmin']);
         Route::patch('admin/{id}', [UserController::class, 'updateAdmin']);
-        Route::delete('admin/{id}', [UserController::class, 'deleteAdmin']);
+        Route::delete('admin/{id}', [UserController::class, 'destroy']);
 
         Route::post('user', [UserController::class, 'store']);
         Route::patch('user/{id}', [UserController::class, 'update']);
