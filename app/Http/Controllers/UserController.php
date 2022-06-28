@@ -14,28 +14,29 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function newAdmin(Request $request){
+    public function addAdmin(Request $request)
+    {
         $validator = Validator::make(
             $request->all(),
             [
                 'mail' => 'required|unique:users|email:rfc|max:80',
-                // 'name' => 'required|unique:users|max:40',
-                // 'password' => 'required',
-                // 'confirm' => 'required'
+                'name' => 'required|unique:users|max:40',
+                'password' => 'required',
+                'confirm' => 'required'
             ],
             [],
             [
                 'mail' => '電子信箱',
-                // 'name' => '姓名',
-                // 'password' => '密碼',
-                // 'confirm' => '確認密碼'
+                'name' => '姓名',
+                'password' => '密碼',
+                'confirm' => '確認密碼'
             ]
         );
         if ($validator->fails()) {
             return  response($validator->errors(), 400);
-        // }elseif($request->password != $request->confirm){
-        //     return  response("密碼與確認密碼不一致 ", 400);
-        }else {
+            // }elseif($request->password != $request->confirm){
+            //     return  response("密碼與確認密碼不一致 ", 400);
+        } else {
             try {
                 $newUser = new user();
                 $newUser->mail = $request["mail"];
@@ -43,9 +44,15 @@ class UserController extends Controller
                 $newUser->save();
                 return response("新增成功", 200);
             } catch (\Exception $e) {
-                return response($e->getMessage(), 200);
+                return response($e->getMessage(), 500);
             }
         }
+    }
+
+    public function showAdmin(Request $request)
+    {
+        $admins = User::where("permission", 0)->get();
+        return response($admins, 200);
     }
 
     public function login(Request $request)
@@ -255,8 +262,8 @@ class UserController extends Controller
                 if ($user == NULL) {
                     return response("id not found", 400);
                 } else {
-                    Locker::where('userId', $id)->update(['userId'=>NULL]);
-                    Record::where('userId', $id)->update(['userId'=>NULL]);
+                    Locker::where('userId', $id)->update(['userId' => NULL]);
+                    Record::where('userId', $id)->update(['userId' => NULL]);
                     $user->delete();
                     return response("success", 200);
                 }

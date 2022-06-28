@@ -29,10 +29,13 @@ Route::middleware([EnableCrossRequestMiddleware::class])->group(function () {
     Route::get('logout', [UserController::class, 'logout']);
 
     Route::middleware([EnsurePermissionIsRoot::class])->group(function () {
-        Route::post('newAdmin', [UserController::class, 'newAdmin']);
+        Route::post('admin', [UserController::class, 'addAdmin']);
+        Route::get('admin', [UserController::class, 'showAdmin']);
+        Route::patch('admin/{id}', [UserController::class, 'updateAdmin']);
+        Route::delete('admin/{id}', [UserController::class, 'deleteAdmin']);
 
-        Route::patch('user/{id}', [UserController::class, 'update']);
         Route::post('user', [UserController::class, 'store']);
+        Route::patch('user/{id}', [UserController::class, 'update']);
         Route::delete('user/{id}', [UserController::class, 'destroy']);
 
         Route::get('locker', [LockerController::class, 'index']);
