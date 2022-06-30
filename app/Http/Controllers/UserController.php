@@ -34,20 +34,20 @@ class UserController extends Controller
         );
         if ($validator->fails()) {
             return  response($validator->errors(), 400);
-        } elseif ($request->password != $request->confirm) {
+        }
+        if ($request->password !== $request->confirm) {
             return  response("密碼與確認密碼不一致 ", 400);
-        } else {
-            try {
-                $newUser = new user();
-                $newUser->mail = $request["mail"];
-                $newUser->name = $request["name"];
-                $newUser->password = $request["password"];
-                $newUser->permission = 0;
-                $newUser->save();
-                return response("新增成功", 200);
-            } catch (\Exception $e) {
-                return response("伺服器錯誤", 500);
-            }
+        }
+        try {
+            $newUser = new user();
+            $newUser->mail = $request["mail"];
+            $newUser->name = $request["name"];
+            $newUser->password = Hash::make($request["password"]);
+            $newUser->permission = 0;
+            $newUser->save();
+            return response("新增成功", 200);
+        } catch (\Exception $e) {
+            return response("伺服器錯誤", 500);
         }
     }
 
@@ -65,17 +65,24 @@ class UserController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'mail' => ['required', 'email:rfc', 'max:80', Rule::unique('users')->ignore($id)],
-                'name' => ['required', 'max:40', Rule::unique('users')->ignore($id)],
+                // 'mail' => ['required', 'email:rfc', 'max:80', Rule::unique('users')->ignore($id)],
+                // 'name' => ['required', 'max:40', Rule::unique('users')->ignore($id)],
+                'password' => 'required',
+                'confirm' => 'required'
             ],
             [],
             [
-                'mail' => '電子信箱',
-                'name' => '姓名',
+                // 'mail' => '電子信箱',
+                // 'name' => '姓名',
+                'password' => '密碼',
+                'confirm' => '確認密碼'
             ]
         );
         if ($validator->fails()) {
             return  response($validator->errors(), 400);
+        }
+        if ($request->password !== $request->confirm) {
+            return  response("密碼與確認密碼不一致", 400);
         }
         $user = User::where('id', $id);
         if ($user->first() == NULL) {
@@ -83,8 +90,7 @@ class UserController extends Controller
         }
         try {
             $user->update([
-                'mail' => $request['mail'],
-                'name' => $request['name'],
+                "password" => Hash::make($request["password"])
             ]);
             return response($user->first(['id', 'name', 'mail']), 200);
         } catch (\Exception $e) {
