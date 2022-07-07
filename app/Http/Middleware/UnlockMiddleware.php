@@ -20,7 +20,7 @@ class UnlockMiddleware
         $token = $request->header('token');
         if ($token == NULL) {
             return response("no_login", 401);
-        } elseif ($token == 'hP4VspmxA6YtIltVtzXioPY3xixgrvxLTMpvkkefWpRjmgpRMdGZ1FtoWWNx') {
+        } elseif ($token == env('RPI_TOKEN')) {
             return $next($request);
         } else {
             return response("token_expired", 401);
