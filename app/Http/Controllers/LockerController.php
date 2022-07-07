@@ -34,16 +34,33 @@ class LockerController extends Controller
             $token = $request->header('token');
             $rootuser = User::where('remember_token', '=', $token)->first();
 
-            MQTT::publish('locker/unlock', $locker->first()->lockerEncoding);
+            $lockerResponse = "";
+            $mqtt = MQTT::connection();
+            $mqtt->subscribe('locker/unlock', function (string $topic, string $message) use ($mqtt, $locker, &$lockerResponse) {
+                $arrayMessage = explode(",", $message);
+                if ($arrayMessage[0] == $locker->first()->lockerEncoding && $arrayMessage[1] != null) {
+                    $lockerResponse = $arrayMessage[1];
+                    $mqtt->interrupt();
+                }
+            }, 0);
+            $mqtt->publish('locker/unlock', $locker->first()->lockerEncoding, 0);
+            $mqtt->loop(true);
 
-            $record = new Record;
-            $record->description = $request['description'];
-            $record->userId = $rootuser->id;
-            $record->lockerId = $locker->first()->id;
-            $record->save();
-
-            $locker->update(['lockUp' => 0]);
-            return response("success", 200);
+            if ($lockerResponse == 0) {
+                $record = new Record;
+                $record->description = $request['description'];
+                $record->userId = $rootuser->id;
+                $record->lockerId = $locker->first()->id;
+                $record->save();
+                $locker->update(['error' => 0]);
+                $locker->update(['lockUp' => 0]);
+                return response("success", 200);
+            } elseif ($lockerResponse == 1) {
+                $locker->update(['error' => 1]);
+                return response("locker ERROR", 501);
+            } else {
+                return response("lockerResponse ERROR", 500);
+            }
         } catch (\Exception $e) {
             return response($e->getMessage(), 422);
         }
@@ -55,7 +72,8 @@ class LockerController extends Controller
             $request->all(),
             [
                 'cardId' => 'required|exists:users',
-            ],[],
+            ],
+            [],
             [
                 'cardId' => '卡號',
             ]
