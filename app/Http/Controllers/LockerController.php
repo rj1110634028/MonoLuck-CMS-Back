@@ -43,6 +43,11 @@ class LockerController extends Controller
                     $mqtt->interrupt();
                 }
             }, 0);
+            $mqtt->registerLoopEventHandler(function ($mqtt, float $elapsedTime) {
+                if ($elapsedTime >= 7) {
+                    $mqtt->interrupt();
+                }
+            });
             $mqtt->publish('locker/unlock', $locker->first()->lockerEncoding, 0);
             $mqtt->loop(true);
 
@@ -57,9 +62,10 @@ class LockerController extends Controller
                 return response("success", 200);
             } elseif ($lockerResponse == 1) {
                 $locker->update(['error' => 1]);
-                return response("locker ERROR", 501);
+                return response("Unlock Fail", 500);
             } else {
-                return response("lockerResponse ERROR", 500);
+                $locker->update(['error' => 1]);
+                return response("Locker ERROR", 500);
             }
         } catch (\Exception $e) {
             return response($e->getMessage(), 422);
