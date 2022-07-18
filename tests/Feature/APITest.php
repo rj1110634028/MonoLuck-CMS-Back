@@ -27,14 +27,14 @@ class APITest extends TestCase
         $response = $this->withHeaders(["token" => $this::$token])->get('/api/locker');
         $response->assertStatus(200);
     }
-    public function test_the_unlock_returns_a_successful_response()
-    {
-        $response = $this->withHeaders(["token" => $this::$token])->post('/api/unlock', [
-            "lockerNo" => "00",
-            "description" => "test"
-        ]);
-        $response->assertStatus(200);
-    }
+    // public function test_the_unlock_returns_a_successful_response()
+    // {
+    //     $response = $this->withHeaders(["token" => $this::$token])->post('/api/unlock', [
+    //         "lockerNo" => "00",
+    //         "description" => "test"
+    //     ]);
+    //     $response->assertStatus(200);
+    // }
 
     public function test_the_addUser_returns_a_successful_response()
     {
