@@ -14,7 +14,7 @@ class mqttsub extends Command
      *
      * @var string
      */
-    protected $signature = 'mqttsub';
+    protected $signature = 'mqtt';
 
     /**
      * The console command description.
@@ -46,6 +46,6 @@ class mqttsub extends Command
         } catch (\Exception $e) {
             echo sprintf($e->getMessage());
         }
-        sleep(5);
+        return 1;
     }
 }

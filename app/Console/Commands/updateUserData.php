@@ -20,7 +20,7 @@ class updateUserData extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'update or create mono\'s users';
 
     /**
      * Execute the console command.
