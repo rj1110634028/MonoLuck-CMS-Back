@@ -6,6 +6,8 @@ use App\Models\Locker;
 use App\Models\User;
 use App\Models\Record;
 use Illuminate\Http\Request;
+use Illuminate\Log\Logger;
+use Illuminate\Support\Facades\Log;
 use PhpMqtt\Client\Facades\MQTT;
 use Illuminate\Support\Facades\Validator;
 
@@ -62,9 +64,11 @@ class LockerController extends Controller
                 return response("success", 200);
             } elseif ($lockerResponse == 1) {
                 $locker->update(['error' => 1]);
+                Log::channel('myError')->error("Unlock Fail in " . __FILE__ . ":" . __LINE__);
                 return response("Unlock Fail", 500);
             } else {
                 $locker->update(['error' => 1]);
+                Log::channel('myError')->error("Locker No Response Or Response ERROR in " . __FILE__ . ":" . __LINE__);
                 return response("Locker ERROR", 500);
             }
         } catch (\Exception $e) {
