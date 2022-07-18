@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use GrahamCampbell\ResultType\Success;
 use Illuminate\Console\Command;
 use PhpMqtt\Client\Facades\MQTT;
 
@@ -30,15 +31,17 @@ class mqttManager extends Command
     {
         try {
             $mqtt = MQTT::connection();
-            $mqtt->registerLoopEventHandler(function ($mqtt, float $elapsedTime) {
-                if ($elapsedTime >= 7) {
-                    $mqtt->interrupt();
-                }
-            });
-            $mqtt->publish('locker/unlock', "", 0);
-            $mqtt->loop(true);
+            while (true) {
+                $mqtt->publish('locker/test', "test", 1);
+                print("loading...\n");
+                $mqtt->loop(true, true);
+                print("success\n");
+                sleep(3);
+            }
         } catch (\Exception $e) {
+            print("failed\n");
             echo sprintf($e->getMessage());
+            system("sudo systemctl restart mosquitto");
         }
         return 1;
     }

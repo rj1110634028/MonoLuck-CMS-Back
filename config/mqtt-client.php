@@ -97,7 +97,7 @@ return [
                 // are only relevant when using the event loop of the MQTT client.
                 'connect_timeout' => env('MQTT_CONNECT_TIMEOUT', 60),
                 'socket_timeout' => env('MQTT_SOCKET_TIMEOUT', 5),
-                'resend_timeout' => env('MQTT_RESEND_TIMEOUT', 10),
+                'resend_timeout' => env('MQTT_RESEND_TIMEOUT', 5),
 
                 // The interval (in seconds) in which the client will send a ping to the broker,
                 // if no other message has been sent.
