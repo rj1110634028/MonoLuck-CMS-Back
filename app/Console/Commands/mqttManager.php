@@ -33,9 +33,7 @@ class mqttManager extends Command
             $mqtt = MQTT::connection();
             while (true) {
                 $mqtt->publish('locker/test', "test", 1);
-                print("loading...\n");
                 $mqtt->loop(true, true);
-                print("success\n");
                 sleep(3);
             }
         } catch (\Exception $e) {
