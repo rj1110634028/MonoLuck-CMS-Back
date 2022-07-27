@@ -37,8 +37,8 @@ jobs:
             composer update
             php artisan migrate
             php artisan cache:clear
-            php artisan route:cache
-            php artisan config:cache
+            php artisan config:clear
+            php artisan route:clear
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           password: ${{ secrets.DEPLOY_PASSWORD }}
