@@ -20,7 +20,6 @@ jobs:
       - run: php artisan cache:clear
       - run: php artisan config:clear
       - run: php artisan route:clear
-      - run: php artisan cache:table
       - run: php artisan migrate --no-interaction --env=testing
       - run: php artisan migrate:refresh --no-interaction --env=testing
       - run: php artisan db:seed --no-interaction --env=testing
@@ -29,7 +28,6 @@ jobs:
       - run: php artisan cache:clear
       - run: php artisan config:clear
       - run: php artisan route:clear
-      - run: php artisan cache:table
       - run: cat ./.env
       - run: rm -rf ./vendor
       - run: rsync -avz -e 'ssh' ./ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}

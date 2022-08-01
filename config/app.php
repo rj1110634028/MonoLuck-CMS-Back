@@ -95,7 +95,9 @@ return [
     |
     */
 
-    'fallback_locale' => 'zh-tw',
+    'fallback_locale' => 'en',
+
+    'available_locales' => ['en', 'zh-tw'],
 
     /*
     |--------------------------------------------------------------------------
