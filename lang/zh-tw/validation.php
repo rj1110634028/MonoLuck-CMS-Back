@@ -16,6 +16,7 @@ return [
     'between' => [
         'string' => ':attribute必須介於:min~:max個字',
     ],
+    'confirmed' => '確認:attribute與:attribute不符',
     'digits_between' => ':attribute必須是介於:min~:max個字的數字',
     'email' => ':attribute必須符合電子信箱格式',
     'exists' => '此:attribute不存在',
@@ -54,6 +55,15 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'lockerNo' => '置物櫃編號',
+        'description' => '開鎖原因',
+        'cardId' => '卡號',
+        'mail' => '電子信箱',
+        'name' => '姓名',
+        'password' => '密碼',
+        'confirm' => '確認密碼',
+        'phone' => '電話號碼',
+    ],
 
 ];

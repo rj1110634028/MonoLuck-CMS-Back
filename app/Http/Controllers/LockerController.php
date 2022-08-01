@@ -21,14 +21,9 @@ class LockerController extends Controller
                 'lockerNo' => 'required|exists:lockers',
                 'description' => 'required',
             ],
-            [],
-            [
-                'lockerNo' => '置物櫃編號',
-                'description' => '開鎖原因',
-            ]
         );
         if ($validator->fails()) {
-            return  response($validator->errors(), 400);
+            return response($validator->errors(), 400);
         }
         try {
             $locker = Locker::where('lockerNo', '=', $request['lockerNo']);
@@ -83,13 +78,9 @@ class LockerController extends Controller
             [
                 'cardId' => 'required|exists:users',
             ],
-            [],
-            [
-                'cardId' => '卡號',
-            ]
         );
         if ($validator->fails()) {
-            return  response($validator->errors(), 400);
+            return response($validator->errors(), 400);
         }
         try {
             $user = User::where('cardId', '=', $request['cardId'])->first();

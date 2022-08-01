@@ -16,27 +16,17 @@ class UserController extends Controller
 {
     public function addAdmin(Request $request)
     {
+        $request["password_confirmation"] = $request["confirm"];
         $validator = Validator::make(
             $request->all(),
             [
                 'mail' => 'required|unique:users|email:rfc|max:80',
                 'name' => 'required|unique:users|max:40',
-                'password' => 'required',
-                'confirm' => 'required'
+                'password' => 'required|confirmed',
             ],
-            [],
-            [
-                'mail' => '電子信箱',
-                'name' => '姓名',
-                'password' => '密碼',
-                'confirm' => '確認密碼'
-            ]
         );
         if ($validator->fails()) {
-            return  response($validator->errors(), 400);
-        }
-        if ($request->password !== $request->confirm) {
-            return  response("密碼與確認密碼不一致 ", 400);
+            return response($validator->errors(), 400);
         }
         try {
             $newUser = new user();
@@ -59,36 +49,25 @@ class UserController extends Controller
 
     public function updateAdmin(Request $request, $id)
     {
-        if ($id == NULL) {
-            return response("id error", 400);
-        }
+        $request["id"] = $id;
+        $request["password_confirmation"] = $request["confirm"];
         $validator = Validator::make(
             $request->all(),
             [
-                // 'mail' => ['required', 'email:rfc', 'max:80', Rule::unique('users')->ignore($id)],
-                // 'name' => ['required', 'max:40', Rule::unique('users')->ignore($id)],
-                'password' => 'required',
-                'confirm' => 'required'
+                'id' => [
+                    'required',
+                    Rule::exists('users')->where(function ($query) {
+                        return $query->where('permission', 0);
+                    }),
+                ],
+                'password' => 'required|confirmed',
             ],
-            [],
-            [
-                // 'mail' => '電子信箱',
-                // 'name' => '姓名',
-                'password' => '密碼',
-                'confirm' => '確認密碼'
-            ]
         );
         if ($validator->fails()) {
-            return  response($validator->errors(), 400);
-        }
-        if ($request->password !== $request->confirm) {
-            return  response("密碼與確認密碼不一致", 400);
-        }
-        $user = User::where('id', $id);
-        if ($user->first() == NULL) {
-            return response("id not found", 400);
+            return response($validator->errors(), 400);
         }
         try {
+            $user = User::where('id', $id);
             $user->update([
                 "password" => Hash::make($request["password"])
             ]);
@@ -182,17 +161,9 @@ class UserController extends Controller
                 'cardId' => 'required|unique:users|digits_between:0,20',
                 'phone' => 'required|unique:users|digits_between:0,20',
             ],
-            [],
-            [
-                'lockerNo' => '置物櫃編號',
-                'mail' => '電子信箱',
-                'name' => '姓名',
-                'cardId' => '卡號',
-                'phone' => '電話',
-            ]
         );
         if ($validator->fails()) {
-            return  response($validator->errors(), 400);
+            return response($validator->errors(), 400);
         }
         $locker = Locker::where("lockerNo", "=", $request["lockerNo"]);
         if ($locker->first()->userId == null) {
@@ -244,35 +215,29 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request["id"] = $id;
         if (preg_match("/^09\d{8}$/", $request['phone'])) {
             $request['phone'] = "886" . ltrim($request['phone'], "0");
-        }
-        if ($id == NULL) {
-            return response("id error", 400);
         }
         $validator = Validator::make(
             $request->all(),
             [
+                'id' => [
+                    'required',
+                    Rule::exists('users')->where(function ($query) {
+                        return $query->where('permission', 1);
+                    }),
+                ],
                 'mail' => ['required', 'email:rfc', 'max:80', Rule::unique('users')->ignore($id)],
                 'name' => ['required', 'max:40', Rule::unique('users')->ignore($id)],
                 'cardId' => ['required', 'numeric', 'digits_between:6,20', Rule::unique('users')->ignore($id)],
                 'phone' => ['required', 'numeric', 'digits_between:1,20', Rule::unique('users')->ignore($id)],
             ],
-            [],
-            [
-                'mail' => '電子信箱',
-                'name' => '姓名',
-                'cardId' => '卡號',
-                'phone' => '電話',
-            ]
         );
         if ($validator->fails()) {
-            return  response($validator->errors(), 400);
+            return response($validator->errors(), 400);
         }
         $user = User::where('id', $id);
-        if ($user->first() == NULL) {
-            return response("id not found", 400);
-        }
         try {
             $user->update([
                 'mail' => $request['mail'],
@@ -293,22 +258,24 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user, $id)
+    public function destroy(Request $request, User $user, $id)
     {
+        $request["id"] = $id;
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'id' => 'required|exists:users'
+            ],
+        );
+        if ($validator->fails()) {
+            return response($validator->errors(), 400);
+        }
         try {
-            if ($id == NULL) {
-                return response("id error", 400);
-            } else {
-                $user = User::where('id', $id);
-                if ($user == NULL) {
-                    return response("id not found", 400);
-                } else {
-                    Locker::where('userId', $id)->update(['userId' => NULL]);
-                    Record::where('userId', $id)->update(['userId' => NULL]);
-                    $user->delete();
-                    return response("success", 200);
-                }
-            }
+            $user = User::where('id', $id);
+            Locker::where('userId', $id)->update(['userId' => NULL]);
+            Record::where('userId', $id)->update(['userId' => NULL]);
+            $user->delete();
+            return response("success", 200);
         } catch (\Exception $e) {
             return response($e->getMessage(), 400);
         }
