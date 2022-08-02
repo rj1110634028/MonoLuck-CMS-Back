@@ -21,7 +21,7 @@ class mqttsub extends Command
      *
      * @var string
      */
-    protected $description = "Update locker's status";
+    protected $description = "Update locker's status or error";
 
     /**
      * Execute the console command.
@@ -41,6 +41,10 @@ class mqttsub extends Command
                 foreach ($lockerEncodings as $lockerEncoding) {
                     DB::table("lockers")->where('lockerEncoding', $lockerEncoding)->update(['lockUp' => 0]);
                 }
+            }, 0);
+            $mqtt->subscribe('locker/error', function (string $topic, string $message) {
+                echo sprintf("Received QoS level 0 message on topic [%s]: \r\n%s\r\n", $topic, $message);
+                DB::table("lockers")->where('lockerEncoding', $message)->update(['error' => 1]);
             }, 0);
             $mqtt->loop(true);
         } catch (\Exception $e) {
