@@ -157,6 +157,15 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'lockerNo' => 'locker Number',
+        'description' => 'unlock reason',
+        'cardId' => 'card number',
+        'mail' => 'email',
+        'name' => 'name',
+        'password' => 'password',
+        'confirm' => 'confirm password',
+        'phone' => 'phone number',
+    ],
 
 ];

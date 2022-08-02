@@ -84,6 +84,12 @@ return [
 
     'locale' => 'zh-tw',
 
+
+    'available_locales' => [
+        'en',
+        'zh-tw',
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Application Fallback Locale

@@ -16,7 +16,13 @@ class Localization
      */
     public function handle(Request $request, Closure $next)
     {
-        $local = ($request->hasHeader('X-localization')) ? $request->header('X-localization') : 'en';
+        if ($request->header('X-localization') == null) {
+            $local = config('app.faker_locale');
+        } elseif (!in_array($request->header('X-localization'), config('app.available_locales'))) {
+            $local = config('app.faker_locale');
+        } else {
+            $local = $request->header('X-localization');
+        }
         app()->setLocale($local);
         return $next($request);
     }
