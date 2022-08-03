@@ -258,7 +258,7 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, User $user, $id)
+    public function destroy(Request $request, $id)
     {
         $request["id"] = $id;
         $validator = Validator::make(
