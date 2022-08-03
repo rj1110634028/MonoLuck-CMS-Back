@@ -293,7 +293,7 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user, $id)
+    public function destroy($id)
     {
         try {
             if ($id == NULL) {
