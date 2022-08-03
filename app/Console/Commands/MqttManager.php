@@ -6,14 +6,14 @@ use GrahamCampbell\ResultType\Success;
 use Illuminate\Console\Command;
 use PhpMqtt\Client\Facades\MQTT;
 
-class mqttManager extends Command
+class MqttManager extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'mqttManager';
+    protected $signature = 'MqttManager';
 
     /**
      * The console command description.
