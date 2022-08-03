@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use PhpMqtt\Client\Facades\MQTT;
 use App\Http\Controllers\LockerController;
 
-class mqttsub extends Command
+class mqttSub extends Command
 {
     /**
      * The name and signature of the console command.

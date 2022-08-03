@@ -22,8 +22,6 @@ return [
     'allowed_origins' => [
         'http://localhost',
         'http://0.0.0.0',
-        'http://10.2.10.111',
-        'http://10.2.10.110',
         'http://stage1.monosparta.org',
     ],
 
