@@ -48,14 +48,18 @@ class RecordController extends Controller
      * @param  \App\Models\Record  $record
      * @return \Illuminate\Http\Response
      */
-    public function show(Record $record, $lockerNo)
+    public function show($lockerNo)
     {
+        $response = "";
+        $httpstatus = 204;
         if ($lockerNo == null) {
-            return response("lockerNo is null", 400);
+            $response = "lockerNo is null";
+            $httpstatus = 400;
         } else {
             $locker = Locker::where("lockerNo", "=", $lockerNo)->first();
             if ($locker == null) {
-                return response("lockerNo error " . $lockerNo, 400);
+                $response = "lockerNo error " . $lockerNo;
+                $httpstatus = 400;
             } else {
                 $records = Record::select([
                     'created_at AS time',
@@ -64,12 +68,14 @@ class RecordController extends Controller
                 ])->with('user:id,name,permission')->where("lockerId", "=", $locker->id)->orderByDesc('created_at')->get();
                 $user = User::where("id", "=", $locker->userId)->first(['id', 'name', 'mail', 'phone', 'cardId']);
                 if ($user == null) {
-                    return response("didn't have user", 400);
+                    $response = "didn't have user";
+                    $httpstatus = 400;
                 } else {
                     return response()->json(["user" => $user, "records" => $records], 200);
                 }
             }
         }
+        return response($response, $httpstatus);
     }
 
     /**

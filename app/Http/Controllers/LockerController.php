@@ -15,15 +15,22 @@ class LockerController extends Controller
 {
     public function unlock(Request $request)
     {
+        $response = "";
+        $httpstatus = 204;
         $validator = Validator::make(
             $request->all(),
             [
                 'lockerNo' => 'required|exists:lockers',
                 'description' => 'required',
             ],
+            [],
+            [
+                'lockerNo' => '置物櫃編號',
+                'description' => '開鎖原因',
+            ]
         );
         if ($validator->fails()) {
-            return response($validator->errors(), 400);
+            return  response($validator->errors(), 400);
         }
         try {
             $locker = Locker::where('lockerNo', '=', $request['lockerNo']);
@@ -56,31 +63,38 @@ class LockerController extends Controller
                 $record->save();
                 $locker->update(['error' => 0]);
                 $locker->update(['lockUp' => 0]);
-                return response("success", 200);
+                $response = "success";
+                $httpstatus = 200;
             } elseif ($lockerResponse == 1) {
                 $locker->update(['error' => 1]);
                 Log::channel('myError')->error("Unlock Fail in " . __FILE__ . ":" . __LINE__);
-                return response("Unlock Fail", 500);
+                $response = "Unlock Fail";
+                $httpstatus = 500;
             } else {
                 $locker->update(['error' => 1]);
                 Log::channel('myError')->error("Locker No Response Or Response ERROR in " . __FILE__ . ":" . __LINE__);
-                return response("Locker ERROR", 500);
+                $response = "Locker ERROR";
+                $httpstatus = 500;
             }
         } catch (\Exception $e) {
-            return response($e->getMessage(), 422);
+            $response = $e->getMessage();
+            $httpstatus = 422;
         }
+        return response($response, $httpstatus);
     }
 
     public function RPIunlock(Request $request)
     {
+        $response = "";
+        $httpstatus = 204;
         $validator = Validator::make(
             $request->all(),
             [
                 'cardId' => 'required|exists:users',
-            ],
+            ]
         );
         if ($validator->fails()) {
-            return response($validator->errors(), 400);
+            return  response($validator->errors(), 400);
         }
         try {
             $user = User::where('cardId', '=', $request['cardId'])->first();
@@ -90,13 +104,18 @@ class LockerController extends Controller
                 $record->userId = $user->id;
                 $record->lockerId = $locker->id;
                 $record->save();
-                // MQTT::publish('locker/unlock', $locker->lockerEncoding);
 
-                return response($locker->lockerEncoding, 200);
-            } else return response("lockererror", 400);
+                $response = $locker->lockerEncoding;
+                $httpstatus = 200;
+            } else {
+                $response = "lockererror";
+                $httpstatus = 400;
+            }
         } catch (\Exception $e) {
-            return response($e->getMessage(), 422);
+            $response = $e->getMessage();
+            $httpstatus = 422;
         }
+        return response($response, $httpstatus);
     }
 
     /**

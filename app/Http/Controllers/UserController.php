@@ -16,6 +16,8 @@ class UserController extends Controller
 {
     public function addAdmin(Request $request)
     {
+        $response = "";
+        $httpstatus = 204;
         $request["password_confirmation"] = $request["confirm"];
         $validator = Validator::make(
             $request->all(),
@@ -26,7 +28,8 @@ class UserController extends Controller
             ],
         );
         if ($validator->fails()) {
-            return response($validator->errors(), 400);
+            $response = $validator->errors();
+            $httpstatus = 400;
         }
         try {
             $newUser = new user();
@@ -35,10 +38,13 @@ class UserController extends Controller
             $newUser->password = Hash::make($request["password"]);
             $newUser->permission = 0;
             $newUser->save();
-            return response("新增成功", 200);
+            $response = "success";
+            $httpstatus = 200;
         } catch (\Exception $e) {
-            return response("伺服器錯誤", 500);
+            $response = $e->getMessage();
+            $httpstatus = 500;
         }
+        return response($response, $httpstatus);
     }
 
     public function showAdmin(Request $request)
@@ -49,6 +55,8 @@ class UserController extends Controller
 
     public function updateAdmin(Request $request, $id)
     {
+        $response = "";
+        $httpstatus = 204;
         $request["id"] = $id;
         $request["password_confirmation"] = $request["confirm"];
         $validator = Validator::make(
@@ -64,21 +72,27 @@ class UserController extends Controller
             ],
         );
         if ($validator->fails()) {
-            return response($validator->errors(), 400);
+            $response = $validator->errors();
+            $httpstatus = 400;
         }
         try {
             $user = User::where('id', $id);
             $user->update([
                 "password" => Hash::make($request["password"])
             ]);
-            return response($user->first(['id', 'name', 'mail']), 200);
+            $response = $user->first(['id', 'name', 'mail']);
+            $httpstatus = 200;
         } catch (\Exception $e) {
-            return response($e->getMessage(), 400);
+            $response = $e->getMessage();
+            $httpstatus = 500;
         }
+        return response($response, $httpstatus);
     }
 
     public function login(Request $request)
     {
+        $response = "";
+        $httpstatus = 204;
         $credentials = $request->only('mail', 'password');
 
         //先確認user資訊是否正確
@@ -149,6 +163,8 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $response = "";
+        $httpstatus = 204;
         if (preg_match("/^09\d{8}$/", $request['phone'])) {
             $request['phone'] = "886" . ltrim($request['phone'], "0");
         }
@@ -163,7 +179,8 @@ class UserController extends Controller
             ],
         );
         if ($validator->fails()) {
-            return response($validator->errors(), 400);
+            $response = $validator->errors();
+            $httpstatus = 400;
         }
         $locker = Locker::where("lockerNo", "=", $request["lockerNo"]);
         if ($locker->first()->userId == null) {
@@ -179,9 +196,14 @@ class UserController extends Controller
                 $locker->update(["userId" => $newUser->id]);
                 return response()->json(['id' => $newUser->id], 200);
             } catch (\Exception $e) {
-                return response($e->getMessage(), 400);
+                $response = $e->getMessage();
+                $httpstatus = 400;
             }
-        } else return response("此置物櫃已被使用", 400);
+        } else {
+            $response = "此置物櫃已被使用";
+            $httpstatus = 400;
+        }
+        return response($response, $httpstatus);
     }
 
     /**
@@ -215,6 +237,8 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $response = "";
+        $httpstatus = 204;
         $request["id"] = $id;
         if (preg_match("/^09\d{8}$/", $request['phone'])) {
             $request['phone'] = "886" . ltrim($request['phone'], "0");
@@ -235,7 +259,8 @@ class UserController extends Controller
             ],
         );
         if ($validator->fails()) {
-            return response($validator->errors(), 400);
+            $response = $validator->errors();
+            $httpstatus = 400;
         }
         $user = User::where('id', $id);
         try {
@@ -245,10 +270,13 @@ class UserController extends Controller
                 'cardId' => $request['cardId'],
                 'phone' => $request['phone']
             ]);
-            return response($user->first(['id', 'name', 'mail', 'phone', 'cardId']), 200);
+            $response = $user->first(['id', 'name', 'mail', 'phone', 'cardId']);
+            $httpstatus = 200;
         } catch (\Exception $e) {
-            return response($e->getMessage(), 400);
+            $response = $e->getMessage();
+            $httpstatus = 400;
         }
+        return response($response, $httpstatus);
     }
 
 
@@ -260,6 +288,8 @@ class UserController extends Controller
      */
     public function destroy(Request $request, $id)
     {
+        $response = "";
+        $httpstatus = 204;
         $request["id"] = $id;
         $validator = Validator::make(
             $request->all(),
@@ -268,16 +298,20 @@ class UserController extends Controller
             ],
         );
         if ($validator->fails()) {
-            return response($validator->errors(), 400);
+            $response = $validator->errors();
+            $httpstatus = 400;
         }
         try {
             $user = User::where('id', $id);
             Locker::where('userId', $id)->update(['userId' => NULL]);
             Record::where('userId', $id)->update(['userId' => NULL]);
             $user->delete();
-            return response("success", 200);
+            $response = "success";
+            $httpstatus = 200;
         } catch (\Exception $e) {
-            return response($e->getMessage(), 400);
+            $response = $e->getMessage();
+            $httpstatus = 400;
         }
+        return response($response, $httpstatus);
     }
 }
