@@ -17,257 +17,143 @@ class LockerSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-        Locker::create(
+        $lockerList = [
             [
                 'lockerNo' => "00",
-                'lockerEncoding' => '0208',
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "01",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => NULL,
-                'lockerEncoding' => NULL,
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => NULL,
-                'lockerEncoding' => NULL,
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => NULL,
-                'lockerEncoding' => NULL,
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => NULL,
-                'lockerEncoding' => NULL,
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "02",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "03",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "04",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => NULL,
-                'lockerEncoding' => NULL,
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => NULL,
-                'lockerEncoding' => NULL,
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => NULL,
-                'lockerEncoding' => NULL,
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => NULL,
-                'lockerEncoding' => NULL,
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "05",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "06",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "07",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "08",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "09",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "10",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "11",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "12",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "13",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "14",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "15",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "16",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "17",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "18",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "19",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "20",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "21",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "22",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "23",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "24",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "25",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "26",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "27",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "28",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "29",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "30",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "31",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "32",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
-            ]
-        );
-        Locker::create(
+            ],
             [
                 'lockerNo' => "33",
-                'lockerEncoding' => $faker->unique()->regexify('[0-9]{4}'),
             ],
-        );
+        ];
+        foreach ($lockerList as $value) {
+            if ($value['lockerNo'] != NULL) {
+                $value['lockerEncoding'] = $faker->unique()->regexify('[0-9]{4}');
+            } else {
+                $value['lockerEncoding'] = NULL;
+            }
+            Locker::create(
+                $value
+            );
+        }
     }
 }
