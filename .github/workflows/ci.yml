@@ -26,14 +26,14 @@ jobs:
         run: composer update --no-ansi --no-interaction --no-progress
 
       - name: Run tests with phpunit/phpunit
-        run: echo "${{ secrets.LARAVEL_ENV_TEST }}" >> ./.env.testing
-        run: php artisan cache:clear
-        run: php artisan config:clear
-        run: php artisan route:clear
-        run: php artisan migrate --no-interaction --env=testing
-        run: php artisan migrate:refresh --no-interaction --env=testing
-        run: php artisan db:seed --no-interaction --env=testing
-        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+      - run: echo "${{ secrets.LARAVEL_ENV_TEST }}" >> ./.env.testing
+      - run: php artisan cache:clear
+      - run: php artisan config:clear
+      - run: php artisan route:clear
+      - run: php artisan migrate --no-interaction --env=testing
+      - run: php artisan migrate:refresh --no-interaction --env=testing
+      - run: php artisan db:seed --no-interaction --env=testing
+      - run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: Fix code coverage paths
         run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
