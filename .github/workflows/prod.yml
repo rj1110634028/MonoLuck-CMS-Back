@@ -18,9 +18,6 @@ jobs:
       - run: composer update
       - run: echo "${{ secrets.LARAVEL_ENV_TEST }}" >> ./.env.testing
       - run: php artisan config:cache
-      - run: sqlite3 storage/locker_cms.db << EOF
-          ;
-          EOF
       - run: php artisan migrate --no-interaction --env=testing
       - run: php artisan migrate:refresh --no-interaction --env=testing
       - run: php artisan db:seed --no-interaction --env=testing
@@ -41,7 +38,6 @@ jobs:
             php artisan cache:clear
             php artisan config:clear
             php artisan route:clear
-            
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           password: ${{ secrets.DEPLOY_PASSWORD }}

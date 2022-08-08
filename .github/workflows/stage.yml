@@ -20,9 +20,6 @@ jobs:
       - run: php artisan cache:clear
       - run: php artisan config:clear
       - run: php artisan route:clear
-      - run: sqlite3 storage/locker_cms.db << EOF
-        ;
-        EOF
       - run: php artisan migrate --no-interaction --env=testing
       - run: php artisan migrate:refresh --no-interaction --env=testing
       - run: php artisan db:seed --no-interaction --env=testing
