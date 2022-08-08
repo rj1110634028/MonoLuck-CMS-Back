@@ -24,6 +24,12 @@ jobs:
 
       - name: Install dependencies with composer
         run: composer update --no-ansi --no-interaction --no-progress
+        
+      - run: echo "${{ secrets.LARAVEL_ENV_TEST }}" >> ./.env.testing
+      - run: php artisan config:cache
+      - run: php artisan migrate --no-interaction --env=testing
+      - run: php artisan migrate:refresh --no-interaction --env=testing
+      - run: php artisan db:seed --no-interaction --env=testing
 
       - name: Run tests with phpunit/phpunit
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
