@@ -27,6 +27,7 @@ jobs:
 
       - name: Run tests with phpunit/phpunit
         steps:
+        - uses: actions/checkout@v2
         - run: echo "${{ secrets.LARAVEL_ENV_TEST }}" >> ./.env.testing
         - run: php artisan cache:clear
         - run: php artisan config:clear
